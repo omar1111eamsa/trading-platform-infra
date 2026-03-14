@@ -1,5 +1,5 @@
 ansible/inventories/test/group_vars/secrets.local.yml
-ansible/inventories/test/group_vars/secrets.vault.yml
+ansible/.vault_pass.txt
 terraform/.terraform/
 terraform/terraform.tfvars
 terraform/terraform.tfstate

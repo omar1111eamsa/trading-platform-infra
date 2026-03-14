@@ -38,8 +38,8 @@ terraform plan
 Before running Ansible, review:
 
 - `ansible/inventories/test/group_vars/all.yml`
-- `ansible/inventories/test/group_vars/secrets.vault.yml` if you use Ansible Vault
-- `ansible/inventories/test/group_vars/secrets.local.yml`
+- `ansible/inventories/test/group_vars/secrets.vault.yml` as the tracked encrypted secret file
+- `ansible/inventories/test/group_vars/secrets.local.yml` only as a temporary fallback
 - `ansible/inventories/test/host_vars/frontend-vm.yml`
 - `ansible/inventories/test/host_vars/backend-vm.yml`
 - `docs/runbook.md`
