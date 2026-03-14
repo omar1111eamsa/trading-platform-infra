@@ -17,6 +17,11 @@ Current target environment:
 - project: `ethereal-aria-490011-s9`
 - zone: `europe-west1-b`
 
+Runner plan:
+
+- `frontend-vm` will host the `terminal-dashboard` self-hosted GitHub runner
+- `backend-vm` will host the `Terminal-backend` self-hosted GitHub runner
+
 Quick start:
 
 ```bash

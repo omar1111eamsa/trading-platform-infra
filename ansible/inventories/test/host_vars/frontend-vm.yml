@@ -5,3 +5,10 @@ app_dir: "{{ app_root }}/terminal-dashboard"
 app_branch: test-ci
 env_template: frontend.env.j2
 env_dest: "{{ app_dir }}/.env.production.local"
+github_runner_enabled: true
+github_runner_repo: "Trading-Terminal2025/terminal-dashboard"
+github_runner_name: "frontend-vm"
+github_runner_labels:
+  - frontend-vm
+  - stage-tradingplatform
+github_runner_registration_token: "{{ frontend_github_runner_registration_token | default('') }}"

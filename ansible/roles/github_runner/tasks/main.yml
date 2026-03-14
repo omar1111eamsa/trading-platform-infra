@@ -1,0 +1,137 @@
+- name: Ensure GitHub runner base directory exists
+  ansible.builtin.file:
+    path: "{{ github_runner_base_dir }}"
+    state: directory
+    owner: "{{ deploy_user }}"
+    group: "{{ deploy_group }}"
+    mode: "0755"
+  when: github_runner_enabled | default(false) | bool
+
+- name: Set GitHub runner paths
+  ansible.builtin.set_fact:
+    github_runner_dir: "{{ github_runner_base_dir }}/{{ github_runner_name }}"
+    github_runner_url: "https://github.com/{{ github_runner_repo }}"
+    github_runner_archive: "actions-runner-linux-{{ github_runner_arch }}-{{ github_runner_version }}.tar.gz"
+    github_runner_download_url: "https://github.com/actions/runner/releases/download/v{{ github_runner_version }}/actions-runner-linux-{{ github_runner_arch }}-{{ github_runner_version }}.tar.gz"
+  when: github_runner_enabled | default(false) | bool
+
+- name: Ensure GitHub runner directory exists
+  ansible.builtin.file:
+    path: "{{ github_runner_dir }}"
+    state: directory
+    owner: "{{ deploy_user }}"
+    group: "{{ deploy_group }}"
+    mode: "0755"
+  when: github_runner_enabled | default(false) | bool
+
+- name: Download GitHub runner archive
+  ansible.builtin.get_url:
+    url: "{{ github_runner_download_url }}"
+    dest: "{{ github_runner_dir }}/{{ github_runner_archive }}"
+    owner: "{{ deploy_user }}"
+    group: "{{ deploy_group }}"
+    mode: "0644"
+  when: github_runner_enabled | default(false) | bool
+
+- name: Extract GitHub runner archive
+  ansible.builtin.unarchive:
+    src: "{{ github_runner_dir }}/{{ github_runner_archive }}"
+    dest: "{{ github_runner_dir }}"
+    remote_src: true
+    owner: "{{ deploy_user }}"
+    group: "{{ deploy_group }}"
+    creates: "{{ github_runner_dir }}/config.sh"
+  when: github_runner_enabled | default(false) | bool
+
+- name: Install runner dependencies
+  ansible.builtin.command:
+    argv:
+      - "{{ github_runner_dir }}/bin/installdependencies.sh"
+  args:
+    creates: /var/lib/github-runner-deps-installed
+  register: github_runner_dependencies
+  changed_when: github_runner_dependencies.rc == 0
+  when: github_runner_enabled | default(false) | bool
+
+- name: Mark runner dependencies installed
+  ansible.builtin.file:
+    path: /var/lib/github-runner-deps-installed
+    state: touch
+    mode: "0644"
+  when:
+    - github_runner_enabled | default(false) | bool
+    - github_runner_dependencies is defined
+    - github_runner_dependencies.rc == 0
+
+- name: Check whether runner is already configured
+  ansible.builtin.stat:
+    path: "{{ github_runner_dir }}/.runner"
+  register: github_runner_configured
+  when: github_runner_enabled | default(false) | bool
+
+- name: Configure GitHub runner
+  ansible.builtin.command:
+    argv:
+      - "{{ github_runner_dir }}/config.sh"
+      - --url
+      - "{{ github_runner_url }}"
+      - --token
+      - "{{ github_runner_registration_token }}"
+      - --name
+      - "{{ github_runner_name }}"
+      - --work
+      - "{{ github_runner_work_dir }}"
+      - --labels
+      - "{{ github_runner_labels | join(',') }}"
+      - --unattended
+      - --replace
+  args:
+    chdir: "{{ github_runner_dir }}"
+  become_user: "{{ deploy_user }}"
+  no_log: true
+  when:
+    - github_runner_enabled | default(false) | bool
+    - not github_runner_configured.stat.exists
+    - (github_runner_registration_token | default('')) | length > 0
+
+- name: Warn when runner token is missing
+  ansible.builtin.debug:
+    msg: "GitHub runner registration token is missing for {{ inventory_hostname }}. Runner files were prepared but registration was skipped."
+  when:
+    - github_runner_enabled | default(false) | bool
+    - not github_runner_configured.stat.exists
+    - (github_runner_registration_token | default('')) | length == 0
+
+- name: Check whether runner service is installed
+  ansible.builtin.find:
+    paths: /etc/systemd/system
+    patterns: "actions.runner*.service"
+    file_type: file
+  register: github_runner_services
+  when:
+    - github_runner_enabled | default(false) | bool
+    - github_runner_configured.stat.exists
+
+- name: Install GitHub runner service
+  ansible.builtin.command:
+    argv:
+      - "{{ github_runner_dir }}/svc.sh"
+      - install
+      - "{{ deploy_user }}"
+  args:
+    chdir: "{{ github_runner_dir }}"
+  when:
+    - github_runner_enabled | default(false) | bool
+    - github_runner_configured.stat.exists
+    - github_runner_services.matched == 0
+
+- name: Start GitHub runner service
+  ansible.builtin.command:
+    argv:
+      - "{{ github_runner_dir }}/svc.sh"
+      - start
+  args:
+    chdir: "{{ github_runner_dir }}"
+  when:
+    - github_runner_enabled | default(false) | bool
+    - github_runner_configured.stat.exists

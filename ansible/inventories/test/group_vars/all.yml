@@ -70,3 +70,11 @@ frontend_env:
 monitoring_enabled: true
 monitoring_dir: /opt/monitoring
 monitoring_port: "3001"
+
+github_runner_version: "2.332.0"
+github_runner_arch_map:
+  x86_64: x64
+  aarch64: arm64
+github_runner_arch: "{{ github_runner_arch_map[ansible_facts['architecture']] | default('x64') }}"
+github_runner_base_dir: /opt/github-actions-runner
+github_runner_work_dir: _work
