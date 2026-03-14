@@ -1,0 +1,37 @@
+- name: Ensure sshd drop-in directory exists
+  ansible.builtin.file:
+    path: /etc/ssh/sshd_config.d
+    state: directory
+    mode: "0755"
+
+- name: Install ssh hardening configuration
+  ansible.builtin.template:
+    src: 99-hardening.conf.j2
+    dest: /etc/ssh/sshd_config.d/99-hardening.conf
+    owner: root
+    group: root
+    mode: "0644"
+  register: ssh_hardening_config
+
+- name: Install fail2ban ssh jail
+  ansible.builtin.template:
+    src: jail.local.j2
+    dest: /etc/fail2ban/jail.local
+    owner: root
+    group: root
+    mode: "0644"
+  when: fail2ban_enabled | bool
+  register: fail2ban_jail
+
+- name: Restart ssh service when config changed
+  ansible.builtin.service:
+    name: ssh
+    state: restarted
+  when: ssh_hardening_config.changed
+
+- name: Ensure fail2ban is enabled
+  ansible.builtin.service:
+    name: fail2ban
+    enabled: true
+    state: "{{ 'restarted' if (fail2ban_jail is defined and fail2ban_jail.changed) else 'started' }}"
+  when: fail2ban_enabled | bool

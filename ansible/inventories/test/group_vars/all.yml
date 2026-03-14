@@ -24,10 +24,21 @@ common_packages:
   - apt-transport-https
   - ca-certificates
   - curl
+  - fail2ban
   - git
   - gnupg
   - lsb-release
   - python3-pip
+
+ssh_allow_users:
+  - omar
+  - deploy
+ssh_password_authentication: "no"
+ssh_permit_root_login: "no"
+ssh_pubkey_authentication: "yes"
+ssh_max_auth_tries: "3"
+ssh_login_grace_time: "30"
+fail2ban_enabled: true
 
 backend_env:
   port: "8081"
