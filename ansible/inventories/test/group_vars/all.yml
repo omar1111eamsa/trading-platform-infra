@@ -43,7 +43,7 @@ backend_env:
   rabbitmq_user: "guest"
   rabbitmq_pass: "guest"
   backend_api_url: "http://backend-api:8081"
-  pgadmin_default_email: "admin@example.com"
+  pgadmin_default_email: "admin@app.example.com"
   pgadmin_default_password: "platformadmin"
   influxdb_url: "http://influxdb:8086"
   influxdb_token: "REDACTED_TOKEN"
