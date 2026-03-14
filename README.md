@@ -18,7 +18,7 @@ Current target environment:
 Quick start:
 
 ```bash
-cd infra/ansible
+cd ansible
 ansible-galaxy collection install -r collections/requirements.yml
 ansible-playbook -i inventories/test/hosts.yml playbooks/site.yml
 ```
@@ -26,7 +26,7 @@ ansible-playbook -i inventories/test/hosts.yml playbooks/site.yml
 Terraform quick start:
 
 ```bash
-cd infra/terraform
+cd terraform
 terraform init
 cp terraform.tfvars.example terraform.tfvars
 terraform validate
@@ -36,6 +36,7 @@ terraform plan
 Before running Ansible, review:
 
 - `ansible/inventories/test/group_vars/all.yml`
+- `ansible/inventories/test/group_vars/secrets.local.yml`
 - `ansible/inventories/test/host_vars/frontend-vm.yml`
 - `ansible/inventories/test/host_vars/backend-vm.yml`
 - `docs/runbook.md`

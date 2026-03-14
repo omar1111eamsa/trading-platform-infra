@@ -1,5 +1,7 @@
-ansible_user: ubuntu
+ansible_user: omar
 ansible_port: 22
+ansible_ssh_private_key_file: /home/omar/.ssh/stage_tradingplatform_admin
+ansible_ssh_common_args: "-o IdentitiesOnly=yes"
 
 deploy_user: deploy
 deploy_group: deploy
@@ -10,16 +12,15 @@ docker_apt_arch_map:
   x86_64: amd64
   aarch64: arm64
 
-docker_apt_arch: "{{ docker_apt_arch_map[ansible_architecture] | default('amd64') }}"
+docker_apt_arch: "{{ docker_apt_arch_map[ansible_facts['architecture']] | default('amd64') }}"
 
 admin_ssh_public_keys: []
 deploy_ssh_public_keys: []
 
-frontend_repo_deploy_key: ""
-backend_repo_deploy_key: ""
 github_pat: ""
 
 common_packages:
+  - acl
   - apt-transport-https
   - ca-certificates
   - curl

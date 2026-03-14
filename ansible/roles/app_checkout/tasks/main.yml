@@ -6,15 +6,6 @@
     group: "{{ deploy_group }}"
     mode: "0755"
 
-- name: Install repository deploy key when provided
-  ansible.builtin.copy:
-    dest: "{{ deploy_home }}/.ssh/{{ app_name | lower }}_deploy_key"
-    content: "{{ app_repo_key }}"
-    owner: "{{ deploy_user }}"
-    group: "{{ deploy_group }}"
-    mode: "0600"
-  when: app_repo_key | length > 0
-
 - name: Build authenticated GitHub repo URL
   ansible.builtin.set_fact:
     app_repo: >-
@@ -33,6 +24,7 @@
     name: github.com
     key: "{{ lookup('pipe', 'ssh-keyscan -t rsa github.com 2>/dev/null') }}"
   become_user: "{{ deploy_user }}"
+  when: github_pat | length == 0
 
 - name: Clone application repository
   ansible.builtin.git:
@@ -40,7 +32,7 @@
     dest: "{{ app_dir }}"
     version: "{{ app_branch }}"
     accept_hostkey: true
-    key_file: "{{ (app_repo_key | length > 0) | ternary(deploy_home ~ '/.ssh/' ~ (app_name | lower) ~ '_deploy_key', omit) }}"
     update: true
+    force: true
   become_user: "{{ deploy_user }}"
   no_log: true

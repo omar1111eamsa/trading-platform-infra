@@ -1,7 +1,7 @@
+ansible_host: REDACTED_IP
 app_name: terminal-dashboard
 app_repo_path: Trading-Terminal2025/terminal-dashboard.git
 app_dir: "{{ app_root }}/terminal-dashboard"
 app_branch: test-ci
-app_repo_key: "{{ frontend_repo_deploy_key }}"
 env_template: frontend.env.j2
-env_dest: "{{ app_dir }}/.env"
+env_dest: "{{ app_dir }}/.env.production.local"
