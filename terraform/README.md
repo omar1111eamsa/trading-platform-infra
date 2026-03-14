@@ -31,7 +31,7 @@ Current design:
 ## Initialize
 
 ```bash
-cd infra/terraform
+cd terraform
 terraform init
 cp terraform.tfvars.example terraform.tfvars
 terraform validate

@@ -1,4 +1,4 @@
-# Infra
+# SysteM Infrastructure
 
 Infrastructure code for the test deployment of the trading platform on Google Cloud.
 
