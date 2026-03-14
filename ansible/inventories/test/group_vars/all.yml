@@ -55,3 +55,7 @@ backend_env:
 frontend_env:
   vite_api_url: "http://10.132.0.3:8081"
   vite_ws_url: "ws://10.132.0.3:8081/ws"
+
+monitoring_enabled: true
+monitoring_dir: /opt/monitoring
+monitoring_port: "3001"

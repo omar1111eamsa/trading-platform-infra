@@ -7,6 +7,7 @@ Managed resources:
 - `frontend-vm`
 - `backend-vm`
 - `allow-frontend-http`
+- `allow-frontend-monitoring`
 - `allow-backend-8081`
 
 Current design:
@@ -44,6 +45,7 @@ These resources already exist in GCP. Import them before relying on `terraform p
 terraform import google_compute_instance.frontend_v1 projects/ethereal-aria-490011-s9/zones/europe-west1-b/instances/frontend-vm
 terraform import google_compute_instance.backend_v1 projects/ethereal-aria-490011-s9/zones/europe-west1-b/instances/backend-vm
 terraform import google_compute_firewall.frontend_http projects/ethereal-aria-490011-s9/global/firewalls/allow-frontend-http
+terraform import google_compute_firewall.frontend_monitoring projects/ethereal-aria-490011-s9/global/firewalls/allow-frontend-monitoring
 terraform import google_compute_firewall.backend_api projects/ethereal-aria-490011-s9/global/firewalls/allow-backend-8081
 ```
 
@@ -59,3 +61,4 @@ terraform plan
 - External IPs are ephemeral by design here.
 - The frontend VM currently maps best to `e2-highcpu-2`, which is what GCP created.
 - The backend VM is `e2-custom-2-4096`.
+- Monitoring UI is published on `frontend-vm:3001` for the test environment.

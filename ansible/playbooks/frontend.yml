@@ -11,3 +11,4 @@
     - deploy_user
     - app_checkout
     - app_env
+    - monitoring

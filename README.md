@@ -6,12 +6,14 @@ This folder contains:
 
 - `ansible/`: VM preparation and app bootstrap automation
 - `terraform/`: Google Cloud infrastructure definitions
+- `monitoring/`: runtime monitoring assets managed through Ansible
 - `docs/`: deployment runbooks and required secrets
 
 Current target environment:
 
 - `frontend-vm` at `REDACTED_IP`
 - `backend-vm` at `REDACTED_IP`
+- `uptime-kuma` at `http://REDACTED_IP:3001`
 - project: `ethereal-aria-490011-s9`
 - zone: `europe-west1-b`
 
