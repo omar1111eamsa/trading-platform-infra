@@ -1,0 +1,14 @@
+project_id = "ethereal-aria-490011-s9"
+region     = "europe-west1"
+zone       = "europe-west1-b"
+
+network    = "default"
+subnetwork = "default"
+
+frontend_vm_name      = "frontend-vm"
+backend_vm_name       = "backend-vm"
+frontend_machine_type = "e2-highcpu-2"
+backend_machine_type  = "e2-custom-2-4096"
+
+frontend_disk_size_gb = 10
+backend_disk_size_gb  = 15

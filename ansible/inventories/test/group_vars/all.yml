@@ -1,0 +1,54 @@
+ansible_user: ubuntu
+ansible_port: 22
+
+deploy_user: deploy
+deploy_group: deploy
+deploy_home: "/home/{{ deploy_user }}"
+app_root: /opt/apps
+
+docker_apt_arch_map:
+  x86_64: amd64
+  aarch64: arm64
+
+docker_apt_arch: "{{ docker_apt_arch_map[ansible_architecture] | default('amd64') }}"
+
+admin_ssh_public_keys: []
+
+frontend_repo_deploy_key: ""
+backend_repo_deploy_key: ""
+
+common_packages:
+  - apt-transport-https
+  - ca-certificates
+  - curl
+  - git
+  - gnupg
+  - lsb-release
+  - python3-pip
+
+backend_env:
+  port: "8081"
+  postgres_dsn: "postgres://app:app@postgres:5432/terminal_backend?sslmode=disable"
+  jwt_secret: "change-me"
+  jwt_expires_in_minutes: "60"
+  admin_username: "change-me"
+  admin_email: "change-me@example.com"
+  admin_password: "change-me-now"
+  rabbitmq_url: "amqp://guest:guest@rabbitmq:5672/"
+  rabbitmq_host: "rabbitmq"
+  rabbitmq_port: "5672"
+  rabbitmq_user: "guest"
+  rabbitmq_pass: "guest"
+  backend_api_url: "http://backend-api:8081"
+  pgadmin_default_email: "admin@example.com"
+  pgadmin_default_password: "platformadmin"
+  influxdb_url: "http://influxdb:8086"
+  influxdb_token: "REDACTED_TOKEN"
+  influxdb_org: "terminal"
+  influxdb_bucket_m1: "candles_m1"
+  influxdb_bucket_m5: "candles_m5"
+  influxdb_bucket_long: "candles_long"
+
+frontend_env:
+  vite_api_url: "http://REDACTED_IP:8081"
+  vite_ws_url: "ws://REDACTED_IP:8081/ws"

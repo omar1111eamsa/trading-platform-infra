@@ -1,0 +1,9 @@
+- name: Prepare frontend VM
+  hosts: frontend
+  become: true
+  roles:
+    - common
+    - docker
+    - deploy_user
+    - app_checkout
+    - app_env

@@ -1,0 +1,29 @@
+- name: Ensure deploy group exists
+  ansible.builtin.group:
+    name: "{{ deploy_group }}"
+    state: present
+
+- name: Ensure deploy user exists
+  ansible.builtin.user:
+    name: "{{ deploy_user }}"
+    group: "{{ deploy_group }}"
+    groups: docker
+    append: true
+    shell: /bin/bash
+    create_home: true
+
+- name: Create SSH directory for deploy user
+  ansible.builtin.file:
+    path: "{{ deploy_home }}/.ssh"
+    state: directory
+    owner: "{{ deploy_user }}"
+    group: "{{ deploy_group }}"
+    mode: "0700"
+
+- name: Install admin SSH public keys
+  ansible.posix.authorized_key:
+    user: "{{ deploy_user }}"
+    state: present
+    key: "{{ item }}"
+  loop: "{{ admin_ssh_public_keys }}"
+  when: admin_ssh_public_keys | length > 0

@@ -1,0 +1,7 @@
+app_name: Terminal-backend
+app_repo: git@github.com:Trading-Terminal2025/Terminal-backend.git
+app_dir: "{{ app_root }}/Terminal-backend"
+app_branch: test-ci
+app_repo_key: "{{ backend_repo_deploy_key }}"
+env_template: backend.env.j2
+env_dest: "{{ app_dir }}/.env"
