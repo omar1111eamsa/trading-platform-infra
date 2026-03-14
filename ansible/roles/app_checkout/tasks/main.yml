@@ -15,6 +15,18 @@
     mode: "0600"
   when: app_repo_key | length > 0
 
+- name: Build authenticated GitHub repo URL
+  ansible.builtin.set_fact:
+    app_repo: >-
+      {{
+        (github_pat | length > 0)
+        | ternary(
+          'https://x-access-token:' ~ github_pat ~ '@github.com/' ~ app_repo_path,
+          'git@github.com:' ~ app_repo_path
+        )
+      }}
+  no_log: true
+
 - name: Ensure GitHub SSH host key is known
   ansible.builtin.known_hosts:
     path: "{{ deploy_home }}/.ssh/known_hosts"
@@ -31,3 +43,4 @@
     key_file: "{{ (app_repo_key | length > 0) | ternary(deploy_home ~ '/.ssh/' ~ (app_name | lower) ~ '_deploy_key', omit) }}"
     update: true
   become_user: "{{ deploy_user }}"
+  no_log: true

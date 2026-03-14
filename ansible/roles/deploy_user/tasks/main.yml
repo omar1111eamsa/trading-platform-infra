@@ -25,5 +25,5 @@
     user: "{{ deploy_user }}"
     state: present
     key: "{{ item }}"
-  loop: "{{ admin_ssh_public_keys }}"
-  when: admin_ssh_public_keys | length > 0
+  loop: "{{ (admin_ssh_public_keys + deploy_ssh_public_keys) | unique }}"
+  when: (admin_ssh_public_keys + deploy_ssh_public_keys) | length > 0

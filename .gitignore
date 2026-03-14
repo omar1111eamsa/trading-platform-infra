@@ -1,0 +1,6 @@
+ansible/inventories/test/group_vars/secrets.local.yml
+terraform/.terraform/
+terraform/terraform.tfvars
+terraform/terraform.tfstate
+terraform/terraform.tfstate.*
+terraform/*.tfplan

@@ -13,9 +13,11 @@ docker_apt_arch_map:
 docker_apt_arch: "{{ docker_apt_arch_map[ansible_architecture] | default('amd64') }}"
 
 admin_ssh_public_keys: []
+deploy_ssh_public_keys: []
 
 frontend_repo_deploy_key: ""
 backend_repo_deploy_key: ""
+github_pat: ""
 
 common_packages:
   - apt-transport-https
@@ -50,5 +52,5 @@ backend_env:
   influxdb_bucket_long: "candles_long"
 
 frontend_env:
-  vite_api_url: "http://REDACTED_IP:8081"
-  vite_ws_url: "ws://REDACTED_IP:8081/ws"
+  vite_api_url: "http://10.132.0.3:8081"
+  vite_ws_url: "ws://10.132.0.3:8081/ws"
