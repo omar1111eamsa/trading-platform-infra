@@ -13,8 +13,9 @@ Current target environment:
 
 - `frontend-vm` at `REDACTED_IP`
 - `backend-vm` at `REDACTED_IP`
-- `windows-vm` will be added on the same VPC with RDP enabled on `3389`
+- `windows-vm` at `REDACTED_IP`
 - `uptime-kuma` at `http://REDACTED_IP:3001`
+- frontend domain target: `dashboardt.example.com`
 - project: `ethereal-aria-490011-s9`
 - zone: `europe-west1-b`
 
@@ -53,8 +54,8 @@ Before running Ansible, review:
 Linux admin user model:
 
 - managed admin user: `hodeconlimited`
-- bootstrap SSH user kept for transition: `omar`
-- after `hodeconlimited` access is verified, you can stop using `omar`
+- active Linux admin SSH user: `hodeconlimited`
+- `deploy` remains the CI/CD runtime user
 
 Before running Terraform, review:
 

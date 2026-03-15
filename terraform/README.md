@@ -25,6 +25,8 @@ Current design:
 - backend VM has an ephemeral external IP and serves the API on port `8081`
 - windows VM uses `e2-custom-4-8192`, gets a static external IP, and allows RDP on `3389`
 - all three VMs stay on the same `default` VPC/subnet
+- frontend static IP currently resolves to `REDACTED_IP`
+- windows static IP currently resolves to `REDACTED_IP`
 
 ## Files
 
@@ -74,3 +76,4 @@ terraform plan
 - The optional DNS record requires Cloud DNS to be enabled and a managed zone for `example.com` to exist in this project.
 - If DNS is managed outside GCP, leave `create_frontend_dns_record = false` and create an external A record pointing to the Terraform frontend static IP output.
 - `windows_admin_password` is marked sensitive, but it still lands in Terraform state and instance metadata because the Windows user is created by startup script. Treat that value as a bootstrap secret and rotate it after first login.
+- The current frontend domain target should point to `REDACTED_IP`.
