@@ -19,13 +19,13 @@ output "backend_internal_ip" {
 }
 
 output "windows_external_ip" {
-  description = "Static external IP of the Windows VM."
-  value       = google_compute_address.windows_public_ip.address
+  description = "Static external IP(s) of the Windows VM(s)."
+  value       = google_compute_address.windows_public_ip[*].address
 }
 
 output "windows_internal_ip" {
-  description = "Internal IP of the Windows VM."
-  value       = google_compute_instance.windows_v1.network_interface[0].network_ip
+  description = "Internal IP(s) of the Windows VM(s)."
+  value       = google_compute_instance.windows_v1[*].network_interface[0].network_ip
 }
 
 output "frontend_domain_name" {

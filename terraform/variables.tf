@@ -172,3 +172,9 @@ variable "frontend_dns_ttl" {
   type        = number
   default     = 300
 }
+
+variable "windows_instance_count" {
+  description = "Number of Windows VM instances to create."
+  type        = number
+  default     = 1
+}
