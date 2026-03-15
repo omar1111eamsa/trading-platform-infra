@@ -7,8 +7,18 @@ subnetwork = "default"
 
 frontend_vm_name      = "frontend-vm"
 backend_vm_name       = "backend-vm"
+windows_vm_name       = "windows-vm"
 frontend_machine_type = "e2-highcpu-2"
 backend_machine_type  = "e2-custom-2-4096"
+windows_machine_type  = "e2-custom-4-8192"
 
 frontend_disk_size_gb = 10
 backend_disk_size_gb  = 15
+windows_disk_size_gb  = 50
+
+windows_admin_user = "hodeconlimited"
+windows_admin_password = "change-me-now"
+
+frontend_domain_name       = "dashboardt.example.com."
+frontend_dns_managed_zone  = ""
+create_frontend_dns_record = false

@@ -1,4 +1,9 @@
-ansible_user: omar
+bootstrap_ansible_user: omar
+admin_user: hodeconlimited
+admin_group: "{{ admin_user }}"
+admin_home: "/home/{{ admin_user }}"
+
+ansible_user: "{{ bootstrap_ansible_user }}"
 ansible_port: 22
 ansible_ssh_private_key_file: /home/omar/.ssh/stage_tradingplatform_admin
 ansible_ssh_common_args: "-o IdentitiesOnly=yes"
@@ -31,7 +36,8 @@ common_packages:
   - python3-pip
 
 ssh_allow_users:
-  - omar
+  - "{{ bootstrap_ansible_user }}"
+  - "{{ admin_user }}"
   - deploy
 ssh_password_authentication: "no"
 ssh_permit_root_login: "no"

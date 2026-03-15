@@ -1,0 +1,17 @@
+$username = "${admin_user}"
+$plainPassword = "${admin_password}"
+
+try {
+    $securePassword = ConvertTo-SecureString $plainPassword -AsPlainText -Force
+    $existingUser = Get-LocalUser -Name $username -ErrorAction SilentlyContinue
+
+    if (-not $existingUser) {
+        New-LocalUser -Name $username -Password $securePassword -FullName $username -Description "Primary admin user created by Terraform startup script"
+    }
+
+    Add-LocalGroupMember -Group "Administrators" -Member $username -ErrorAction SilentlyContinue
+    Set-LocalUser -Name $username -PasswordNeverExpires $true
+} catch {
+    Write-Error $_
+    exit 1
+}

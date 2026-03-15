@@ -14,6 +14,7 @@
   roles:
     - common
     - docker
+    - admin_user
     - deploy_user
     - ssh_hardening
     - app_checkout

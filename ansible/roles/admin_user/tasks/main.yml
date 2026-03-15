@@ -1,0 +1,39 @@
+- name: Ensure admin group exists
+  ansible.builtin.group:
+    name: "{{ admin_group }}"
+    state: present
+
+- name: Ensure admin user exists
+  ansible.builtin.user:
+    name: "{{ admin_user }}"
+    group: "{{ admin_group }}"
+    groups:
+      - sudo
+      - docker
+    append: true
+    shell: /bin/bash
+    create_home: true
+
+- name: Create SSH directory for admin user
+  ansible.builtin.file:
+    path: "{{ admin_home }}/.ssh"
+    state: directory
+    owner: "{{ admin_user }}"
+    group: "{{ admin_group }}"
+    mode: "0700"
+
+- name: Install admin SSH public keys for admin user
+  ansible.posix.authorized_key:
+    user: "{{ admin_user }}"
+    state: present
+    key: "{{ item }}"
+  loop: "{{ admin_ssh_public_keys | unique }}"
+  when: admin_ssh_public_keys | length > 0
+
+- name: Allow passwordless sudo for admin user
+  ansible.builtin.copy:
+    dest: "/etc/sudoers.d/{{ admin_user }}"
+    content: "{{ admin_user }} ALL=(ALL) NOPASSWD:ALL\n"
+    owner: root
+    group: root
+    mode: "0440"
