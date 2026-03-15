@@ -94,6 +94,12 @@
     - not github_runner_configured.stat.exists
     - (github_runner_registration_token | default('')) | length > 0
 
+- name: Refresh runner configuration state
+  ansible.builtin.stat:
+    path: "{{ github_runner_dir }}/.runner"
+  register: github_runner_configured
+  when: github_runner_enabled | default(false) | bool
+
 - name: Warn when runner token is missing
   ansible.builtin.debug:
     msg: "GitHub runner registration token is missing for {{ inventory_hostname }}. Runner files were prepared but registration was skipped."

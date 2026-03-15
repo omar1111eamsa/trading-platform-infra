@@ -2,17 +2,15 @@
   hosts: backend
   become: true
   pre_tasks:
-    - name: Load preferred secret file when present
+    - name: Load vault secrets when present
       ansible.builtin.include_vars:
-        file: "{{ lookup('first_found', secret_file_candidates, errors='ignore') }}"
-      vars:
-        secret_file_candidates:
-          files:
-            - "secrets.vault.yml"
-            - "secrets.local.yml"
-          paths:
-            - "{{ playbook_dir }}/../inventories/test/group_vars"
-      when: lookup('first_found', secret_file_candidates, errors='ignore') | length > 0
+        file: "{{ playbook_dir }}/../inventories/test/group_vars/secrets.vault.yml"
+      when: lookup('ansible.builtin.file', playbook_dir ~ '/../inventories/test/group_vars/secrets.vault.yml', errors='ignore') != ''
+
+    - name: Load local secrets overrides when present
+      ansible.builtin.include_vars:
+        file: "{{ playbook_dir }}/../inventories/test/group_vars/secrets.local.yml"
+      when: lookup('ansible.builtin.file', playbook_dir ~ '/../inventories/test/group_vars/secrets.local.yml', errors='ignore') != ''
   roles:
     - common
     - docker
