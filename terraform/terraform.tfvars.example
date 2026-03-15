@@ -19,6 +19,6 @@ windows_disk_size_gb  = 50
 windows_admin_user = "hodeconlimited"
 windows_admin_password = "REDACTED_PASSWORD"
 
-frontend_domain_name       = "dashboardt.example.com."
+frontend_domain_name       = "dashboard.example.com."
 frontend_dns_managed_zone  = ""
 create_frontend_dns_record = false

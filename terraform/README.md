@@ -14,7 +14,7 @@ Managed resources:
 - `allow-frontend-monitoring`
 - `allow-backend-8081`
 - `allow-windows-rdp`
-- optional Cloud DNS A record for `dashboardt.example.com.`
+- optional Cloud DNS A record for `dashboard.example.com.`
 
 Current design:
 

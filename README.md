@@ -15,7 +15,7 @@ Current target environment:
 - `backend-vm` at `REDACTED_IP`
 - `windows-vm` at `REDACTED_IP`
 - `uptime-kuma` at `http://REDACTED_IP:3001`
-- frontend domain target: `dashboardt.example.com`
+- frontend domain target: `dashboard.example.com`
 - project: `ethereal-aria-490011-s9`
 - zone: `europe-west1-b`
 

@@ -152,7 +152,7 @@ variable "windows_admin_password" {
 variable "frontend_domain_name" {
   description = "Frontend DNS name to point at the frontend static IP."
   type        = string
-  default     = "dashboardt.example.com."
+  default     = "dashboard.example.com."
 }
 
 variable "frontend_dns_managed_zone" {
