@@ -17,7 +17,7 @@ backend_disk_size_gb  = 15
 windows_disk_size_gb  = 50
 
 windows_admin_user = "hodeconlimited"
-windows_admin_password = "change-me-now"
+windows_admin_password = "REDACTED_PASSWORD"
 
 frontend_domain_name       = "dashboardt.example.com."
 frontend_dns_managed_zone  = ""

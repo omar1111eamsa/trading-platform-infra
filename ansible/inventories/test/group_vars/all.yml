@@ -1,4 +1,4 @@
-bootstrap_ansible_user: omar
+bootstrap_ansible_user: hodeconlimited
 admin_user: hodeconlimited
 admin_group: "{{ admin_user }}"
 admin_home: "/home/{{ admin_user }}"
@@ -36,7 +36,6 @@ common_packages:
   - python3-pip
 
 ssh_allow_users:
-  - "{{ bootstrap_ansible_user }}"
   - "{{ admin_user }}"
   - deploy
 ssh_password_authentication: "no"
@@ -70,8 +69,8 @@ backend_env:
   influxdb_bucket_long: "candles_long"
 
 frontend_env:
-  vite_api_url: "http://10.132.0.3:8081"
-  vite_ws_url: "ws://10.132.0.3:8081/ws"
+  vite_api_url: "http://REDACTED_IP:8081"
+  vite_ws_url: "ws://REDACTED_IP:8081/ws"
 
 monitoring_enabled: true
 monitoring_dir: /opt/monitoring
