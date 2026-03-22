@@ -9,7 +9,7 @@ frontend_vm_name      = "frontend-vm"
 backend_vm_name       = "backend-vm"
 windows_vm_name       = "windows-vm"
 frontend_machine_type = "e2-highcpu-2"
-backend_machine_type  = "e2-custom-2-4096"
+backend_machine_type  = "e2-custom-4-8192"
 windows_machine_type  = "e2-custom-4-8192"
 
 frontend_disk_size_gb = 10
@@ -20,5 +20,8 @@ windows_admin_user = "hodeconlimited"
 windows_admin_password = "REDACTED_PASSWORD"
 
 frontend_domain_name       = "dashboard.example.com."
+backend_domain_name        = "api.example.com."
 frontend_dns_managed_zone  = ""
+backend_dns_managed_zone   = ""
 create_frontend_dns_record = false
+create_backend_dns_record  = false

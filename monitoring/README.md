@@ -21,7 +21,7 @@ To accurately monitor the system without exposing the databases publicly, setup 
    - URL: `http://REDACTED_IP:80`
 2. **Backend API:**
    - Type: `HTTP(s) - Keyword`
-   - URL: `http://REDACTED_IP:8081/health`
+   - URL: `http://api.example.com:8081/health`
    - Keyword: `healthy`
 
 ### 🔒 INTERNAL Monitors (Testing the isolated VPC network)

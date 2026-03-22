@@ -69,8 +69,8 @@ backend_env:
   influxdb_bucket_long: "candles_long"
 
 frontend_env:
-  vite_api_url: "http://REDACTED_IP:8081"
-  vite_ws_url: "ws://REDACTED_IP:8081/ws"
+  vite_api_url: "http://api.example.com:8081"
+  vite_ws_url: "ws://api.example.com:8081/ws"
 
 monitoring_enabled: true
 monitoring_dir: /opt/monitoring

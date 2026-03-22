@@ -79,7 +79,7 @@ variable "frontend_machine_type" {
 variable "backend_machine_type" {
   description = "Machine type for the backend VM."
   type        = string
-  default     = "e2-custom-2-4096"
+  default     = "e2-custom-4-8192"
 }
 
 variable "windows_machine_type" {
@@ -155,8 +155,20 @@ variable "frontend_domain_name" {
   default     = "dashboard.example.com."
 }
 
+variable "backend_domain_name" {
+  description = "Backend DNS name to point at the backend static IP."
+  type        = string
+  default     = "api.example.com."
+}
+
 variable "frontend_dns_managed_zone" {
   description = "Cloud DNS managed zone name for the frontend domain. Leave empty if DNS is managed elsewhere."
+  type        = string
+  default     = ""
+}
+
+variable "backend_dns_managed_zone" {
+  description = "Cloud DNS managed zone name for the backend domain. Leave empty if DNS is managed elsewhere."
   type        = string
   default     = ""
 }
@@ -167,8 +179,20 @@ variable "create_frontend_dns_record" {
   default     = false
 }
 
+variable "create_backend_dns_record" {
+  description = "Whether to manage the backend A record in Cloud DNS."
+  type        = bool
+  default     = false
+}
+
 variable "frontend_dns_ttl" {
   description = "TTL for the frontend DNS A record."
+  type        = number
+  default     = 300
+}
+
+variable "backend_dns_ttl" {
+  description = "TTL for the backend DNS A record."
   type        = number
   default     = 300
 }
