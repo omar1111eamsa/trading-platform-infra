@@ -28,6 +28,16 @@ output "windows_internal_ip" {
   value       = google_compute_instance.windows_v1[*].network_interface[0].network_ip
 }
 
+output "mt5_worker_external_ip" {
+  description = "Static external IP(s) for future MT5 worker VMs."
+  value       = google_compute_address.mt5_worker_public_ip[*].address
+}
+
+output "mt5_worker_internal_ip" {
+  description = "Internal IP(s) for future MT5 worker VMs."
+  value       = google_compute_instance.mt5_worker[*].network_interface[0].network_ip
+}
+
 output "frontend_domain_name" {
   description = "Configured frontend domain name."
   value       = var.frontend_domain_name

@@ -13,7 +13,8 @@ Current target environment:
 
 - `frontend-vm` at `REDACTED_IP`
 - `backend-vm` at `REDACTED_IP`
-- `windows-vm` at `REDACTED_IP`
+- `windows-vm` at `REDACTED_IP` (existing manual MT5 host)
+- `windows-vm-2` at `REDACTED_IP` (existing manual clone/standby)
 - `uptime-kuma` at `http://REDACTED_IP:3001`
 - frontend domain target: `dashboard.example.com`
 - backend domain target: `api.example.com`
@@ -64,3 +65,9 @@ Before running Terraform, review:
 - `terraform/variables.tf`
 - `terraform/terraform.tfvars.example`
 - `terraform/README.md`
+
+Windows worker model:
+
+- the current `windows-vm` and `windows-vm-2` are preserved as existing manual MT5 hosts
+- future production MT5 worker VMs should be created from the `mt5-worker-golden` custom image
+- Terraform worker creation is defined but disabled by default until you explicitly opt in

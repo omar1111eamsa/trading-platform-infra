@@ -88,6 +88,12 @@ variable "windows_machine_type" {
   default     = "e2-custom-4-8192"
 }
 
+variable "mt5_worker_machine_type" {
+  description = "Machine type for future MT5 worker VMs."
+  type        = string
+  default     = "e2-custom-4-8192"
+}
+
 variable "frontend_disk_size_gb" {
   description = "Boot disk size for the frontend VM."
   type        = number
@@ -102,6 +108,12 @@ variable "backend_disk_size_gb" {
 
 variable "windows_disk_size_gb" {
   description = "Boot disk size for the Windows VM."
+  type        = number
+  default     = 50
+}
+
+variable "mt5_worker_disk_size_gb" {
+  description = "Boot disk size for future MT5 worker VMs."
   type        = number
   default     = 50
 }
@@ -122,6 +134,12 @@ variable "windows_tags" {
   description = "Network tags for the Windows VM."
   type        = list(string)
   default     = ["windows-vm", "rdp-server"]
+}
+
+variable "mt5_worker_tags" {
+  description = "Network tags for future MT5 worker VMs."
+  type        = list(string)
+  default     = ["mt5-worker", "rdp-server"]
 }
 
 variable "ssh_source_ranges" {
@@ -201,4 +219,28 @@ variable "windows_instance_count" {
   description = "Number of Windows VM instances to create."
   type        = number
   default     = 1
+}
+
+variable "create_mt5_workers" {
+  description = "Whether Terraform should create future MT5 worker VMs from the golden image."
+  type        = bool
+  default     = false
+}
+
+variable "mt5_worker_instance_count" {
+  description = "Number of future MT5 worker VMs to create when create_mt5_workers is enabled."
+  type        = number
+  default     = 0
+}
+
+variable "mt5_worker_name_prefix" {
+  description = "Name prefix for future MT5 worker VMs."
+  type        = string
+  default     = "mt5-worker"
+}
+
+variable "mt5_worker_image" {
+  description = "Custom image self link or family reference for future MT5 worker VMs."
+  type        = string
+  default     = "projects/ethereal-aria-490011-s9/global/images/family/mt5-worker-golden"
 }

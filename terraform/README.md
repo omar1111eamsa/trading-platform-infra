@@ -6,10 +6,10 @@ Managed resources:
 
 - `frontend-vm`
 - `backend-vm`
-- `windows-vm`
 - `frontend-vm` static public IP
 - `backend-vm` static public IP
-- `windows-vm` static public IP
+- optional future `mt5-worker` VMs created from a golden image
+- optional future `mt5-worker` static public IPs
 - `allow-stage-vm-ssh`
 - `allow-frontend-http`
 - `allow-frontend-monitoring`
@@ -24,10 +24,11 @@ Current design:
 - zone: `europe-west1-b`
 - frontend VM uses a static external IP and serves HTTP on port `80`
 - backend VM uses a static external IP and serves the API on port `8081`
-- windows VM uses `e2-custom-4-8192`, gets a static external IP, and allows RDP on `3389`
-- all three VMs stay on the same `default` VPC/subnet
+- existing `windows-vm` and `windows-vm-2` remain manual MT5 hosts and are not part of the desired apply path
+- future MT5 workers use `e2-custom-4-8192` by default, boot from the `mt5-worker-golden` custom image, and allow RDP/WinRM
+- all core VMs and future workers stay on the same `default` VPC/subnet
 - frontend static IP currently resolves to `REDACTED_IP`
-- windows static IP currently resolves to `REDACTED_IP`
+- current manual Windows host IPs are `REDACTED_IP` and `REDACTED_IP`
 
 ## Files
 
@@ -48,7 +49,7 @@ cp terraform.tfvars.example terraform.tfvars
 terraform validate
 ```
 
-## Import the existing VMs and firewall rules
+## Import the existing core VMs and firewall rules
 
 These resources already exist in GCP. Import them before relying on `terraform plan` output.
 
@@ -71,9 +72,10 @@ terraform plan
 ## Notes
 
 - The frontend VM currently maps best to `e2-highcpu-2`, which is what GCP created.
-- The backend VM is `e2-custom-2-4096`.
 - The backend VM is `e2-custom-4-8192`.
-- The Windows VM is defined as `e2-custom-4-8192`.
+- The future MT5 worker default is `e2-custom-4-8192`.
+- The `mt5-worker` resources are disabled by default via `create_mt5_workers = false`.
+- The worker image reference should stay on the golden image family, for example `projects/ethereal-aria-490011-s9/global/images/family/mt5-worker-golden`.
 - Monitoring UI is published on `frontend-vm:3001` for the test environment.
 - The optional DNS records require Cloud DNS to be enabled and a managed zone for `example.com` to exist in this project.
 - If DNS is managed outside GCP, leave `create_frontend_dns_record = false` and `create_backend_dns_record = false`, then create external A records pointing to the Terraform frontend and backend static IP outputs.

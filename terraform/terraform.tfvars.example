@@ -11,10 +11,12 @@ windows_vm_name       = "windows-vm"
 frontend_machine_type = "e2-highcpu-2"
 backend_machine_type  = "e2-custom-4-8192"
 windows_machine_type  = "e2-custom-4-8192"
+mt5_worker_machine_type = "e2-custom-4-8192"
 
 frontend_disk_size_gb = 10
 backend_disk_size_gb  = 15
 windows_disk_size_gb  = 50
+mt5_worker_disk_size_gb = 50
 
 windows_admin_user = "hodeconlimited"
 windows_admin_password = "REDACTED_PASSWORD"
@@ -25,3 +27,7 @@ frontend_dns_managed_zone  = ""
 backend_dns_managed_zone   = ""
 create_frontend_dns_record = false
 create_backend_dns_record  = false
+create_mt5_workers         = false
+mt5_worker_instance_count  = 0
+mt5_worker_name_prefix     = "mt5-worker"
+mt5_worker_image           = "projects/ethereal-aria-490011-s9/global/images/family/mt5-worker-golden"

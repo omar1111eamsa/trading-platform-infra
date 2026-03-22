@@ -1,0 +1,7 @@
+- name: Prepare worker hosts
+  hosts: workers
+  gather_facts: false
+  tasks:
+    - name: Note current worker management model
+      ansible.builtin.debug:
+        msg: "Windows MT5 workers are expected to come preconfigured from the golden image; no in-place Ansible changes are applied by default."
