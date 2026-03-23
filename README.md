@@ -57,7 +57,7 @@ Linux admin user model:
 
 - managed admin user: `hodeconlimited`
 - active Linux admin SSH user: `hodeconlimited`
-- `deploy` remains the CI/CD runtime user
+- current verified SSH key path example: `~/.ssh/google_compute_engine`
 
 Before running Terraform, review:
 
