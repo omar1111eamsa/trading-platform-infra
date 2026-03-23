@@ -15,7 +15,7 @@ The compose definition rendered to the VM lives under:
 
 To accurately monitor the system without exposing the databases publicly, setup your monitors in your dashboard identically to this:
 
-### 🌍 PUBLIC Monitors (Testing the Firewalls + App)
+### PUBLIC Monitors (Testing the Firewalls + App)
 1. **Frontend Dashboard:**
    - Type: `HTTP(s)`
    - URL: `http://REDACTED_IP:80`
@@ -24,7 +24,7 @@ To accurately monitor the system without exposing the databases publicly, setup 
    - URL: `http://REDACTED_IP:8081/health`
    - Keyword: `healthy`
 
-### 🔒 INTERNAL Monitors (Testing the isolated VPC network)
+### INTERNAL Monitors (Testing the isolated VPC network)
 3. **PostgreSQL Database:**
    - Type: `TCP Port`
    - Hostname: `10.132.0.3`
