@@ -21,7 +21,7 @@ To accurately monitor the system without exposing the databases publicly, setup 
    - URL: `http://REDACTED_IP:80`
 2. **Backend API:**
    - Type: `HTTP(s) - Keyword`
-   - URL: `http://REDACTED_IP:8081/health`
+   - URL: `http://api.example.com:8081/health`
    - Keyword: `healthy`
 
 ### INTERNAL Monitors (Testing the isolated VPC network)
@@ -42,4 +42,4 @@ To accurately monitor the system without exposing the databases publicly, setup 
 
 Important:
 
-- switch the backend monitor to `http://api.example.com:8081/health` only after OVH DNS is configured
+- the backend monitor should now use `http://api.example.com:8081/health`
