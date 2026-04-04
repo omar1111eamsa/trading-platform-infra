@@ -4,7 +4,7 @@ Runtime monitoring for the test environment is deployed through the Ansible `mon
 
 Current stack:
 
-- `Uptime Kuma` exposed on `frontend-vm:3001`
+- `Uptime Kuma` exposed on the Linux VM at port `3001` (Ansible `linux_ui` play; host name `trading-platform-vm-ui` when `linux_vm_name` is default)
 - public URL: `http://REDACTED_IP:3001`
 
 The compose definition rendered to the VM lives under:

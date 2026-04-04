@@ -1,5 +1,9 @@
 ansible/inventories/test/group_vars/secrets.local.yml
 ansible/.vault_pass.txt
+ansible/.venv/
+ansible/sshpass-1.09/
+ansible/sshpass-1.09.tar.gz
+ansible/win_hosts.ini
 terraform/.terraform/
 terraform/terraform.tfvars
 terraform/terraform.tfstate

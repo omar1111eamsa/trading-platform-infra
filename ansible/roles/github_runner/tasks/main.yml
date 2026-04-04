@@ -108,12 +108,13 @@
     - not github_runner_configured.stat.exists
     - (github_runner_registration_token | default('')) | length == 0
 
-- name: Check whether runner service is installed
+# Per-runner unit name ends with ".<runner_name>.service" (multiple runners on one host are supported).
+- name: Check whether this runner has a systemd unit
   ansible.builtin.find:
     paths: /etc/systemd/system
-    patterns: "actions.runner*.service"
+    patterns: "actions.runner*.{{ github_runner_name }}.service"
     file_type: file
-  register: github_runner_services
+  register: github_runner_unit
   when:
     - github_runner_enabled | default(false) | bool
     - github_runner_configured.stat.exists
@@ -129,7 +130,7 @@
   when:
     - github_runner_enabled | default(false) | bool
     - github_runner_configured.stat.exists
-    - github_runner_services.matched == 0
+    - (github_runner_unit.matched | default(0)) == 0
 
 - name: Start GitHub runner service
   ansible.builtin.command:

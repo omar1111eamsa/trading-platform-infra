@@ -1,17 +1,23 @@
-bootstrap_ansible_user: hodeconlimited
+# First SSH login on fresh VMs (EC2 Ubuntu: ubuntu; custom images may use another user).
+bootstrap_ansible_user: ubuntu
 admin_user: hodeconlimited
 admin_group: "{{ admin_user }}"
 admin_home: "/home/{{ admin_user }}"
 
 ansible_user: "{{ bootstrap_ansible_user }}"
 ansible_port: 22
-ansible_ssh_private_key_file: /home/omar/.ssh/stage_tradingplatform_admin
+# Optional: ansible_ssh_private_key_file is set in terraform-generated inventories/aws/hosts.generated.yml
+# or use ssh-agent / ansible-playbook --private-key ~/.ssh/key.pem
 ansible_ssh_common_args: "-o IdentitiesOnly=yes"
 
 deploy_user: deploy
 deploy_group: deploy
 deploy_home: "/home/{{ deploy_user }}"
 app_root: /opt/apps
+
+# EC2 Name tag: Terraform variable linux_vm_name (default trading-platform-vm).
+# Ansible inventory hosts and GitHub runner labels: "{{ linux_vm_name }}-ui" and "{{ linux_vm_name }}-api".
+linux_vm_name: trading-platform-vm
 
 docker_apt_arch_map:
   x86_64: amd64
@@ -34,10 +40,12 @@ common_packages:
   - gnupg
   - lsb-release
   - python3-pip
+  - rsync
 
 ssh_allow_users:
+  - "{{ bootstrap_ansible_user }}"
   - "{{ admin_user }}"
-  - deploy
+  - "{{ deploy_user }}"
 ssh_password_authentication: "no"
 ssh_permit_root_login: "no"
 ssh_pubkey_authentication: "yes"
@@ -68,9 +76,26 @@ backend_env:
   influxdb_bucket_m5: "candles_m5"
   influxdb_bucket_long: "candles_long"
 
+# Public hostnames (DNS A/AAAA → Linux VM). Nginx proxies :443/:80 → backend :8081 and UI :3000.
+platform_api_domain: api.example.com
+platform_terminal_domain: terminal.example.com
+
+# http until Let's Encrypt succeeds; then set to https and re-run playbook to refresh app .env files.
+public_url_scheme: http
+
+# Optional: set true and certbot_admin_email in secrets after DNS points at this server.
+nginx_edge_enabled: true
+nginx_edge_letsencrypt: false
+certbot_admin_email: ""
+
 frontend_env:
-  vite_api_url: "http://api.example.com:8081"
-  vite_ws_url: "ws://api.example.com:8081/ws"
+  vite_api_url: "{{ public_url_scheme }}://{{ platform_api_domain }}"
+  vite_ws_url: "{{ 'wss' if public_url_scheme == 'https' else 'ws' }}://{{ platform_api_domain }}/ws"
+
+# UI-Terminal (Next.js) — docker-compose uses env_file: .env
+ui_terminal_env:
+  next_public_api_url: "{{ public_url_scheme }}://{{ platform_api_domain }}"
+  next_public_ws_url: "{{ 'wss' if public_url_scheme == 'https' else 'ws' }}://{{ platform_api_domain }}/ws"
 
 monitoring_enabled: true
 monitoring_dir: /opt/monitoring

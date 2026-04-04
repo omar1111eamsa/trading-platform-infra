@@ -1,0 +1,15 @@
+# Terminal / Next.js stack on aws_instance.linux_vm (Terraform var linux_vm_name).
+# GitHub Actions: runs-on: [ self-hosted, "{{ linux_vm_name }}-ui" ]
+app_name: UI-Terminal
+app_repo_path: Trading-Terminal2025/UI-Terminal-.git
+app_dir: "{{ app_root }}/UI-Terminal-"
+app_branch: test-ci
+env_template: ui_terminal.env.j2
+env_dest: "{{ app_dir }}/.env"
+github_runner_enabled: true
+github_runner_repo: "Trading-Terminal2025/UI-Terminal-"
+github_runner_name: "{{ linux_vm_name }}-ui"
+github_runner_labels:
+  - "{{ linux_vm_name }}-ui"
+  - stage-tradingplatform
+github_runner_registration_token: "{{ frontend_github_runner_registration_token | default('') }}"

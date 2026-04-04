@@ -1,246 +1,168 @@
-variable "project_id" {
-  description = "Google Cloud project ID."
-  type        = string
-  default     = "ethereal-aria-490011-s9"
-}
-
 variable "region" {
-  description = "Google Cloud region."
+  description = "AWS region."
   type        = string
-  default     = "europe-west1"
+  default     = "eu-west-1"
 }
 
-variable "zone" {
-  description = "Google Cloud zone."
+variable "availability_zone" {
+  description = "AWS availability zone."
   type        = string
-  default     = "europe-west1-b"
+  default     = "eu-west-1a"
 }
 
-variable "network" {
-  description = "VPC network name."
+variable "vpc_cidr" {
+  description = "CIDR block for the VPC."
   type        = string
-  default     = "default"
+  default     = "10.0.0.0/16"
 }
 
-variable "subnetwork" {
-  description = "Subnetwork name."
+variable "public_subnet_cidr" {
+  description = "CIDR block for the public subnet."
   type        = string
-  default     = "default"
+  default     = "10.0.1.0/24"
 }
 
-variable "image_project" {
-  description = "Boot image project."
+# ── SSH / RDP access ──
+
+variable "ssh_key_name" {
+  description = "Base name for the Terraform-managed RSA key pair in EC2 (actual key name will be \"<name>-rsa\"). Private PEM is written to terraform/generated/ec2_rsa.pem."
   type        = string
-  default     = "ubuntu-os-cloud"
 }
 
-variable "image_family" {
-  description = "Boot image family."
+variable "linux_ssh_user" {
+  description = "First-boot SSH user on the Ubuntu AMI (EC2 Canonical images use ubuntu)."
   type        = string
-  default     = "ubuntu-2204-lts"
+  default     = "ubuntu"
 }
 
-variable "windows_image_project" {
-  description = "Boot image project for the Windows VM."
+variable "ansible_ssh_private_key_path" {
+  description = "Path to the private key Ansible and the optional provisioner should use (expanded with pathexpand). Empty = rely on ssh-agent."
   type        = string
-  default     = "windows-cloud"
+  default     = ""
 }
 
-variable "windows_image_family" {
-  description = "Boot image family for the Windows VM."
+variable "ansible_provision" {
+  description = "If true, run ansible-playbook against the Linux VM after Terraform apply (requires ansible on PATH and a reachable key or agent)."
+  type        = bool
+  default     = false
+}
+
+variable "ansible_playbook_relative_dir" {
+  description = "Directory containing the Ansible playbooks, relative to the terraform module path (default: sibling ../ansible)."
   type        = string
-  default     = "windows-2022"
-}
-
-variable "frontend_vm_name" {
-  description = "Frontend instance name."
-  type        = string
-  default     = "frontend-vm"
-}
-
-variable "backend_vm_name" {
-  description = "Backend instance name."
-  type        = string
-  default     = "backend-vm"
-}
-
-variable "windows_vm_name" {
-  description = "Windows instance name."
-  type        = string
-  default     = "windows-vm"
-}
-
-variable "frontend_machine_type" {
-  description = "Machine type for the frontend VM."
-  type        = string
-  default     = "e2-highcpu-2"
-}
-
-variable "backend_machine_type" {
-  description = "Machine type for the backend VM."
-  type        = string
-  default     = "e2-custom-4-8192"
-}
-
-variable "windows_machine_type" {
-  description = "Machine type for the Windows VM."
-  type        = string
-  default     = "e2-custom-4-8192"
-}
-
-variable "mt5_worker_machine_type" {
-  description = "Machine type for future MT5 worker VMs."
-  type        = string
-  default     = "e2-custom-4-8192"
-}
-
-variable "frontend_disk_size_gb" {
-  description = "Boot disk size for the frontend VM."
-  type        = number
-  default     = 10
-}
-
-variable "backend_disk_size_gb" {
-  description = "Boot disk size for the backend VM."
-  type        = number
-  default     = 15
-}
-
-variable "windows_disk_size_gb" {
-  description = "Boot disk size for the Windows VM."
-  type        = number
-  default     = 50
-}
-
-variable "mt5_worker_disk_size_gb" {
-  description = "Boot disk size for future MT5 worker VMs."
-  type        = number
-  default     = 50
-}
-
-variable "frontend_tags" {
-  description = "Network tags for the frontend VM."
-  type        = list(string)
-  default     = ["frontend-vm", "http-server"]
-}
-
-variable "backend_tags" {
-  description = "Network tags for the backend VM."
-  type        = list(string)
-  default     = ["backend-vm"]
-}
-
-variable "windows_tags" {
-  description = "Network tags for the Windows VM."
-  type        = list(string)
-  default     = ["windows-vm", "rdp-server"]
-}
-
-variable "mt5_worker_tags" {
-  description = "Network tags for future MT5 worker VMs."
-  type        = list(string)
-  default     = ["mt5-worker", "rdp-server"]
+  default     = "../ansible"
 }
 
 variable "ssh_source_ranges" {
-  description = "Allowed source ranges for SSH to the Linux VMs."
+  description = "Allowed source CIDRs for SSH."
   type        = list(string)
   default     = ["0.0.0.0/0"]
 }
 
 variable "rdp_source_ranges" {
-  description = "Allowed source ranges for RDP to the Windows VM."
+  description = "Allowed source CIDRs for RDP."
   type        = list(string)
   default     = ["0.0.0.0/0"]
 }
 
+# ── Linux VM (backend + frontends) ──
+
+variable "linux_vm_name" {
+  description = "Name tag for the Linux VM."
+  type        = string
+  default     = "trading-platform-vm"
+}
+
+variable "linux_instance_type" {
+  description = "EC2 instance type for the Linux VM."
+  type        = string
+  default     = "t3.large"
+}
+
+variable "linux_disk_size_gb" {
+  description = "Root volume size for the Linux VM in GB."
+  type        = number
+  default     = 80
+}
+
+variable "linux_ami_owner" {
+  description = "AMI owner for Ubuntu images (Canonical)."
+  type        = string
+  default     = "099720109477"
+}
+
+variable "linux_ami_name_filter" {
+  description = "AMI name filter for Ubuntu 22.04."
+  type        = string
+  default     = "ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*"
+}
+
+# ── Windows VM (MT5 worker) ──
+
+variable "windows_vm_name" {
+  description = "Name tag for the Windows VM."
+  type        = string
+  default     = "mt5-worker-vm"
+}
+
+variable "windows_instance_type" {
+  description = "EC2 instance type for the Windows VM."
+  type        = string
+  default     = "t3.large"
+}
+
+variable "windows_disk_size_gb" {
+  description = "Root volume size for the Windows VM in GB."
+  type        = number
+  default     = 50
+}
+
+variable "windows_instance_count" {
+  description = "Number of Windows MT5 VMs to create."
+  type        = number
+  default     = 1
+}
+
 variable "windows_admin_user" {
-  description = "Primary local administrator username to create on the Windows VM."
+  description = "Admin username for the Windows VM."
   type        = string
   default     = "hodeconlimited"
 }
 
 variable "windows_admin_password" {
-  description = "Password for the Windows local administrator account created by the startup script."
+  description = "Admin password for the Windows VM."
   type        = string
   sensitive   = true
-  default     = "ChangeMe123!ChangeMe123!"
 }
 
+# ── Domain names (informational, DNS managed externally) ──
+
 variable "frontend_domain_name" {
-  description = "Frontend DNS name to point at the frontend static IP."
+  description = "Frontend domain name (dashboard)."
   type        = string
-  default     = "dashboard.example.com."
+  default     = "dashboard.example.com"
 }
 
 variable "backend_domain_name" {
-  description = "Backend DNS name to point at the backend static IP."
+  description = "Backend domain name (API)."
   type        = string
-  default     = "api.example.com."
+  default     = "api.example.com"
 }
 
-variable "frontend_dns_managed_zone" {
-  description = "Cloud DNS managed zone name for the frontend domain. Leave empty if DNS is managed elsewhere."
+variable "terminal_domain_name" {
+  description = "UI-Terminal domain name."
   type        = string
-  default     = ""
+  default     = "terminal.example.com"
 }
 
-variable "backend_dns_managed_zone" {
-  description = "Cloud DNS managed zone name for the backend domain. Leave empty if DNS is managed elsewhere."
-  type        = string
-  default     = ""
-}
+# ── Tags ──
 
-variable "create_frontend_dns_record" {
-  description = "Whether to manage the frontend A record in Cloud DNS."
-  type        = bool
-  default     = false
-}
-
-variable "create_backend_dns_record" {
-  description = "Whether to manage the backend A record in Cloud DNS."
-  type        = bool
-  default     = false
-}
-
-variable "frontend_dns_ttl" {
-  description = "TTL for the frontend DNS A record."
-  type        = number
-  default     = 300
-}
-
-variable "backend_dns_ttl" {
-  description = "TTL for the backend DNS A record."
-  type        = number
-  default     = 300
-}
-
-variable "windows_instance_count" {
-  description = "Number of Windows VM instances to create."
-  type        = number
-  default     = 1
-}
-
-variable "create_mt5_workers" {
-  description = "Whether Terraform should create future MT5 worker VMs from the golden image."
-  type        = bool
-  default     = false
-}
-
-variable "mt5_worker_instance_count" {
-  description = "Number of future MT5 worker VMs to create when create_mt5_workers is enabled."
-  type        = number
-  default     = 0
-}
-
-variable "mt5_worker_name_prefix" {
-  description = "Name prefix for future MT5 worker VMs."
-  type        = string
-  default     = "mt5-worker"
-}
-
-variable "mt5_worker_image" {
-  description = "Custom image self link or family reference for future MT5 worker VMs."
-  type        = string
-  default     = "projects/ethereal-aria-490011-s9/global/images/family/mt5-worker-golden"
+variable "common_tags" {
+  description = "Common tags applied to all resources."
+  type        = map(string)
+  default = {
+    environment = "test"
+    managed_by  = "terraform"
+    project     = "stage-tradingplatform"
+  }
 }

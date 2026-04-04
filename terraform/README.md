@@ -1,11 +1,13 @@
 # Terraform
 
-Terraform for Google Cloud resources used by the test environment.
+**Primary path:** `main.tf` defines **AWS** resources — `aws_instance.linux_vm` (Name tag from `linux_vm_name`, default `trading-platform-vm`), Elastic IP, security groups, and `aws_instance.windows_vm` for MT5 (`windows_vm_name`, default `mt5-worker-vm`). Ansible inventory generated from the template uses host names `{{ linux_vm_name }}-ui` and `{{ linux_vm_name }}-api` on the same Linux IP.
 
-Managed resources:
+Legacy Google Cloud notes below apply only if you still maintain that state.
 
-- `frontend-vm`
-- `backend-vm`
+Managed resources (historical GCP doc — instance names were `frontend-vm` / `backend-vm`):
+
+- `frontend-vm` (legacy GCE)
+- `backend-vm` (legacy GCE)
 - `frontend-vm` static public IP
 - `backend-vm` static public IP
 - optional future `mt5-worker` VMs created from a golden image
@@ -76,7 +78,7 @@ terraform plan
 - The future MT5 worker default is `e2-custom-4-8192`.
 - The `mt5-worker` resources are disabled by default via `create_mt5_workers = false`.
 - The worker image reference should stay on the golden image family, for example `projects/ethereal-aria-490011-s9/global/images/family/mt5-worker-golden`.
-- Monitoring UI is published on `frontend-vm:3001` for the test environment.
+- Monitoring UI is published on port `3001` on the Linux host (Ansible `linux_ui`; default runner host name `trading-platform-vm-ui`).
 - The optional DNS records require Cloud DNS to be enabled and a managed zone for `example.com` to exist in this project.
 - If DNS is managed outside GCP, leave `create_frontend_dns_record = false` and `create_backend_dns_record = false`, then create external A records pointing to the Terraform frontend and backend static IP outputs.
 - `windows_admin_password` is marked sensitive, but it still lands in Terraform state and instance metadata because the Windows user is created by startup script. Treat that value as a bootstrap secret and rotate it after first login.

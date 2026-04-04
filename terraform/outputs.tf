@@ -1,49 +1,64 @@
-output "frontend_external_ip" {
-  description = "Static external IP of the frontend VM."
-  value       = google_compute_address.frontend_public_ip.address
+output "linux_vm_public_ip" {
+  description = "Static public IP of the Linux VM (backend + frontends)."
+  value       = aws_eip.linux_vm.public_ip
 }
 
-output "frontend_internal_ip" {
-  description = "Internal IP of the frontend VM."
-  value       = google_compute_instance.frontend_v1.network_interface[0].network_ip
+output "linux_vm_private_ip" {
+  description = "Private IP of the Linux VM."
+  value       = aws_instance.linux_vm.private_ip
 }
 
-output "backend_external_ip" {
-  description = "Static external IP of the backend VM."
-  value       = google_compute_address.backend_public_ip.address
+output "linux_vm_id" {
+  description = "EC2 instance ID of the Linux VM."
+  value       = aws_instance.linux_vm.id
 }
 
-output "backend_internal_ip" {
-  description = "Internal IP of the backend VM."
-  value       = google_compute_instance.backend_v1.network_interface[0].network_ip
+output "windows_vm_public_ip" {
+  description = "Static public IP(s) of the Windows VM(s)."
+  value       = aws_eip.windows_vm[*].public_ip
 }
 
-output "windows_external_ip" {
-  description = "Static external IP(s) of the Windows VM(s)."
-  value       = google_compute_address.windows_public_ip[*].address
+output "windows_vm_private_ip" {
+  description = "Private IP(s) of the Windows VM(s)."
+  value       = aws_instance.windows_vm[*].private_ip
 }
 
-output "windows_internal_ip" {
-  description = "Internal IP(s) of the Windows VM(s)."
-  value       = google_compute_instance.windows_v1[*].network_interface[0].network_ip
+output "windows_vm_id" {
+  description = "EC2 instance ID(s) of the Windows VM(s)."
+  value       = aws_instance.windows_vm[*].id
 }
 
-output "mt5_worker_external_ip" {
-  description = "Static external IP(s) for future MT5 worker VMs."
-  value       = google_compute_address.mt5_worker_public_ip[*].address
+output "vpc_id" {
+  description = "VPC ID."
+  value       = aws_vpc.main.id
 }
 
-output "mt5_worker_internal_ip" {
-  description = "Internal IP(s) for future MT5 worker VMs."
-  value       = google_compute_instance.mt5_worker[*].network_interface[0].network_ip
+output "public_subnet_id" {
+  description = "Public subnet ID."
+  value       = aws_subnet.public.id
 }
 
-output "frontend_domain_name" {
-  description = "Configured frontend domain name."
-  value       = var.frontend_domain_name
+output "dns_instructions" {
+  description = "DNS records to create at your domain registrar."
+  value       = <<-EOT
+    Point these DNS A records to the Linux VM IP (${aws_eip.linux_vm.public_ip}):
+      ${var.frontend_domain_name}  → ${aws_eip.linux_vm.public_ip}
+      ${var.backend_domain_name}   → ${aws_eip.linux_vm.public_ip}
+      ${var.terminal_domain_name}  → ${aws_eip.linux_vm.public_ip}
+  EOT
 }
 
-output "backend_domain_name" {
-  description = "Configured backend domain name."
-  value       = var.backend_domain_name
+output "ansible_inventory_file" {
+  description = "Generated Ansible inventory (linux_ui + linux_api hosts on aws_instance.linux_vm, same public IP)."
+  value       = abspath("${path.module}/../ansible/inventories/aws/hosts.generated.yml")
+}
+
+output "ansible_provision_hint" {
+  description = "Example command to run Ansible manually after apply (test inventory supplies group_vars/host_vars; generated file supplies EIP and SSH key)."
+  value       = "cd ../ansible && ansible-galaxy collection install -r collections/requirements.yml && ansible-playbook -i inventories/test/hosts.yml -i inventories/aws/hosts.generated.yml playbooks/site.yml"
+}
+
+output "ec2_private_key_path" {
+  description = "Path to the RSA private key for ubuntu@linux and Administrator@windows (via EC2 Session Manager or after enabling SSH on Windows)."
+  value       = abspath("${path.module}/generated/ec2_rsa.pem")
 }

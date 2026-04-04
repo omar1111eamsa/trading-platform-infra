@@ -5,4 +5,4 @@ PermitRootLogin {{ ssh_permit_root_login }}
 PubkeyAuthentication {{ ssh_pubkey_authentication }}
 MaxAuthTries {{ ssh_max_auth_tries }}
 LoginGraceTime {{ ssh_login_grace_time }}
-AllowUsers {{ ssh_allow_users | join(' ') }}
+AllowUsers {{ ssh_allow_users | unique | reject('equalto', '') | list | join(' ') }}

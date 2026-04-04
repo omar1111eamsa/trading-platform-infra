@@ -1,0 +1,101 @@
+- name: Install and configure nginx edge reverse proxy
+  when: nginx_edge_enabled | default(true) | bool
+  block:
+    - name: Install nginx
+      ansible.builtin.apt:
+        name: nginx
+        state: present
+        update_cache: true
+
+    - name: Install certbot when Let's Encrypt is enabled
+      ansible.builtin.apt:
+        name:
+          - certbot
+          - python3-certbot-nginx
+        state: present
+      when: nginx_edge_letsencrypt | default(false) | bool
+
+    - name: Stat Let's Encrypt certificate
+      ansible.builtin.stat:
+        path: /etc/letsencrypt/live/{{ platform_api_domain }}/fullchain.pem
+      register: le_cert
+
+    - name: Deploy nginx app edge site
+      ansible.builtin.template:
+        src: app-edge.conf.j2
+        dest: /etc/nginx/sites-available/app-edge.conf
+        mode: "0644"
+      notify: Reload nginx
+
+    - name: Enable app edge site
+      ansible.builtin.file:
+        src: /etc/nginx/sites-available/app-edge.conf
+        dest: /etc/nginx/sites-enabled/app-edge.conf
+        state: link
+      notify: Reload nginx
+
+    - name: Remove default nginx site
+      ansible.builtin.file:
+        path: /etc/nginx/sites-enabled/default
+        state: absent
+      when: nginx_edge_default_site_removed | bool
+      notify: Reload nginx
+
+    - name: Validate nginx configuration
+      ansible.builtin.command:
+        cmd: nginx -t
+      changed_when: false
+
+    - name: Ensure nginx is enabled and running
+      ansible.builtin.service:
+        name: nginx
+        state: started
+        enabled: true
+
+    - name: Flush handlers before certbot
+      ansible.builtin.meta: flush_handlers
+
+    - name: Obtain Let's Encrypt certificate
+      ansible.builtin.command:
+        argv:
+          - certbot
+          - certonly
+          - --nginx
+          - --non-interactive
+          - --agree-tos
+          - --email
+          - "{{ certbot_admin_email }}"
+          - --cert-name
+          - "{{ platform_api_domain }}"
+          - -d
+          - "{{ platform_api_domain }}"
+          - -d
+          - "{{ platform_terminal_domain }}"
+      args:
+        creates: /etc/letsencrypt/live/{{ platform_api_domain }}/fullchain.pem
+      when:
+        - nginx_edge_letsencrypt | default(false) | bool
+        - (certbot_admin_email | default('')) | length > 0
+        - not (le_cert.stat.exists | default(false))
+
+    - name: Refresh Let's Encrypt certificate stat
+      ansible.builtin.stat:
+        path: /etc/letsencrypt/live/{{ platform_api_domain }}/fullchain.pem
+      register: le_cert
+
+    - name: Redeploy nginx config when TLS certificate is present
+      ansible.builtin.template:
+        src: app-edge.conf.j2
+        dest: /etc/nginx/sites-available/app-edge.conf
+        mode: "0644"
+      when: le_cert.stat.exists | default(false)
+      notify: Reload nginx
+
+    - name: Validate nginx after TLS configuration
+      ansible.builtin.command:
+        cmd: nginx -t
+      changed_when: false
+      when: le_cert.stat.exists | default(false)
+
+    - name: Flush nginx reload handler
+      ansible.builtin.meta: flush_handlers

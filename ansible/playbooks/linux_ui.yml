@@ -1,11 +1,12 @@
-- name: Prepare backend VM
-  hosts: backend
+- name: Linux VM — terminal UI stack (aws_instance.linux_vm)
+  hosts: linux_ui
   become: true
   pre_tasks:
     - name: Load vault secrets when present
       ansible.builtin.include_vars:
         file: "{{ playbook_dir }}/../inventories/test/group_vars/secrets.vault.yml"
       when: lookup('ansible.builtin.file', playbook_dir ~ '/../inventories/test/group_vars/secrets.vault.yml', errors='ignore') != ''
+      ignore_errors: true
 
     - name: Load local secrets overrides when present
       ansible.builtin.include_vars:
@@ -19,4 +20,5 @@
     - ssh_hardening
     - app_checkout
     - app_env
+    - monitoring
     - github_runner

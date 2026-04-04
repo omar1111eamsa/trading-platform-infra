@@ -1,4 +1,5 @@
-ansible_host: REDACTED_IP
+# Backend API + nginx on aws_instance.linux_vm (Terraform var linux_vm_name).
+# GitHub Actions: runs-on: [ self-hosted, "{{ linux_vm_name }}-api" ]
 app_name: Terminal-backend
 app_repo_path: Trading-Terminal2025/Terminal-backend.git
 app_dir: "{{ app_root }}/Terminal-backend"
@@ -7,8 +8,8 @@ env_template: backend.env.j2
 env_dest: "{{ app_dir }}/.env"
 github_runner_enabled: true
 github_runner_repo: "Trading-Terminal2025/Terminal-backend"
-github_runner_name: "backend-vm"
+github_runner_name: "{{ linux_vm_name }}-api"
 github_runner_labels:
-  - backend-vm
+  - "{{ linux_vm_name }}-api"
   - stage-tradingplatform
 github_runner_registration_token: "{{ backend_github_runner_registration_token | default('') }}"
