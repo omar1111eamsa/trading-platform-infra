@@ -1,3 +1,4 @@
 - import_playbook: linux_ui.yml
 - import_playbook: linux_api.yml
+- import_playbook: linux_dashboard.yml
 - import_playbook: worker.yml

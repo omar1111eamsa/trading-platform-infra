@@ -49,7 +49,7 @@ output "dns_instructions" {
 }
 
 output "ansible_inventory_file" {
-  description = "Generated Ansible inventory (linux_ui + linux_api hosts on aws_instance.linux_vm, same public IP)."
+  description = "Generated Ansible inventory (linux_ui, linux_api, linux_dashboard on aws_instance.linux_vm, same public IP)."
   value       = abspath("${path.module}/../ansible/inventories/aws/hosts.generated.yml")
 }
 
