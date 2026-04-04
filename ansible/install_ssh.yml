@@ -1,0 +1,16 @@
+---
+- name: Install and Configure OpenSSH Server on Windows
+  hosts: windows
+  gather_facts: false
+  tasks:
+    - name: Ensure OpenSSH Server is installed
+      win_shell: |
+        Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0
+        Set-Service -Name sshd -StartupType 'Automatic'
+        Start-Service sshd
+      register: ssh_install
+      changed_when: ssh_install.stdout is match(".*State.*Installed.*") or ssh_install.stdout == ""
+      
+    - name: Display installation result
+      debug:
+        var: ssh_install.stdout_lines

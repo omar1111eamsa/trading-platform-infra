@@ -7,6 +7,15 @@
     mode: "0755"
   when: github_runner_enabled | default(false) | bool
 
+- name: Remove legacy self-hosted runner installs (wrong name / labels)
+  ansible.builtin.include_tasks: legacy_cleanup_one.yml
+  loop: "{{ github_runner_cleanup_legacy | default([]) }}"
+  loop_control:
+    loop_var: legacy_runner_name
+  when:
+    - github_runner_enabled | default(false) | bool
+    - (github_runner_cleanup_legacy | default([])) | length > 0
+
 - name: Set GitHub runner paths
   ansible.builtin.set_fact:
     github_runner_dir: "{{ github_runner_base_dir }}/{{ github_runner_name }}"
