@@ -19,7 +19,12 @@
 - name: Set GitHub runner paths
   ansible.builtin.set_fact:
     github_runner_dir: "{{ github_runner_base_dir }}/{{ github_runner_name }}"
-    github_runner_url: "https://github.com/{{ github_runner_repo }}"
+    github_runner_url: >-
+      {{
+        ('https://github.com/' ~ github_runner_organization)
+        if (github_runner_organization | default('') | length > 0)
+        else ('https://github.com/' ~ github_runner_repo)
+      }}
     github_runner_archive: "actions-runner-linux-{{ github_runner_arch }}-{{ github_runner_version }}.tar.gz"
     github_runner_download_url: "https://github.com/actions/runner/releases/download/v{{ github_runner_version }}/actions-runner-linux-{{ github_runner_arch }}-{{ github_runner_version }}.tar.gz"
   when: github_runner_enabled | default(false) | bool

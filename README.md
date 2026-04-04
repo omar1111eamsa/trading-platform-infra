@@ -47,15 +47,14 @@ ansible-playbook -i inventories/test/hosts.yml -i inventories/aws/hosts.generate
 
 Optional: set `ansible_provision = true` in `terraform.tfvars` to run the same playbook automatically after apply (requires `ansible` on the machine running Terraform).
 
-Self-hosted GitHub Actions (aligned with repo workflows):
+Self-hosted GitHub Actions (organization runner, one VM):
 
-- **Terminal-backend** uses `runs-on: [self-hosted, trading-platform-vm-api]` — runner name and label `trading-platform-vm-api` under `/opt/github-actions-runner/trading-platform-vm-api` (prefix matches Terraform `linux_vm_name`).
-- **UI-Terminal-** / **terminal-dashboard** use `runs-on: [self-hosted, trading-platform-vm-ui]` — runner `trading-platform-vm-ui` under `/opt/github-actions-runner/trading-platform-vm-ui`.
-- If you change `linux_vm_name` in Terraform and `group_vars/all.yml`, update workflow labels and `inventories/test/hosts.yml` host keys to match.
-- On a **single Linux VM**, both runners install on the same machine; set GitHub repo secrets `BACKEND_APP_DIR` and `UI_TERMINAL_APP_DIR` to `/opt/apps/Terminal-backend` and `/opt/apps/UI-Terminal-` respectively.
-- Add `frontend_github_runner_registration_token` and `backend_github_runner_registration_token` to your vault or `secrets.local.yml` (generate a new token per repo from GitHub → Settings → Actions → Runners).
-- **Re-register after renaming runners:** `linux_ui.yml` / `linux_api.yml` set `github_runner_cleanup_legacy` to tear down `/opt/github-actions-runner/frontend-vm` and `backend-vm` (stop service, `config.sh remove` with that repo’s token, delete the directory) before installing `trading-platform-vm-ui` / `trading-platform-vm-api`. Run `site.yml` with valid tokens once, confirm runners are online, then set `github_runner_cleanup_legacy: []` (or remove the key) so later runs do not repeat cleanup. If `config.sh remove` fails (wrong repo), delete the offline runner in GitHub and remove the old directory on the VM by hand.
-- **terminal-dashboard** is not registered by this Ansible repo; if it uses another self-hosted runner on the same machine, re-register that runner from **terminal-dashboard** with label `trading-platform-vm-ui` (or add it to automation separately).
+- **One org-level runner** is installed by the `linux_ui` play: `github_runner_organization: Trading-Terminal2025`, name `{{ linux_vm_name }}-org` (e.g. `trading-platform-vm-org`), labels **`trading-platform-vm-ui`**, **`trading-platform-vm-api`**, and `stage-tradingplatform`. It can run deploy jobs for **UI-Terminal-**, **terminal-dashboard**, and **Terminal-backend** as long as GitHub allows it (see below).
+- **GitHub UI (required once):** Organization **Trading-Terminal2025** → **Settings** → **Actions** → **Runner groups** → open the group that contains your self-hosted runners (often **Default**) → **Repository access** → **All repositories** or explicitly add `UI-Terminal-`, `terminal-dashboard`, and `Terminal-backend`.
+- **Token:** Add `github_org_runner_registration_token` to `secrets.local.yml` or vault. Generate with an org admin account, e.g. `gh api -X POST orgs/Trading-Terminal2025/actions/runners/registration-token -q .token` (needs permission to manage org runners). Run `ansible-playbook ...` with that secret loaded; you can also pass `-e github_org_runner_registration_token=...` for a one-off.
+- **`linux_api` play** has `github_runner_enabled: false` so a second runner is not registered for the same host.
+- **One-time migration:** `linux_ui.yml` lists `github_runner_cleanup_legacy` for the old per-repo runner directories (`trading-platform-vm-ui`, `trading-platform-vm-api`). After a successful run, remove that list (or set to `[]`). Delete any duplicate **offline** runners under **Organization → Settings → Actions → Runners** if they remain.
+- Repo secrets `BACKEND_APP_DIR` and `UI_TERMINAL_APP_DIR` stay pointed at `/opt/apps/Terminal-backend` and `/opt/apps/UI-Terminal-` on the Linux VM.
 
 **Domains (no `:8081` in the browser):** Point `api` and `terminal` hostnames at the Linux VM IP, then run Ansible. The `nginx_edge` role proxies `http(s)://api.<domain>/` → `127.0.0.1:8081` and `terminal.<domain>` → UI on `:3000`, with WebSocket upgrade on `/ws`. Defaults use `public_url_scheme: http`; after DNS works, set `nginx_edge_letsencrypt: true`, `certbot_admin_email`, re-run the playbook, then set `public_url_scheme: https` and re-run once more so app `.env` files get `https`/`wss`. Refresh GitHub secret `UI_TERMINAL_DOTENV` if the UI repo builds from that secret.
 
