@@ -7,9 +7,6 @@ app_branch: test-ci
 env_template: ui_terminal.env.j2
 env_dest: "{{ app_dir }}/.env"
 github_runner_enabled: true
-# One-time migration: remove old dirs on the VM; clear this list after a successful run.
-github_runner_cleanup_legacy:
-  - frontend-vm
 github_runner_repo: "Trading-Terminal2025/UI-Terminal-"
 github_runner_name: "{{ linux_vm_name }}-ui"
 github_runner_labels:
