@@ -1,11 +1,18 @@
-ansible/inventories/test/group_vars/secrets.local.yml
+# Local Ansible secrets and runtime artifacts
 ansible/.vault_pass.txt
 ansible/.venv/
 ansible/sshpass-1.09/
 ansible/sshpass-1.09.tar.gz
 ansible/win_hosts.ini
-terraform/.terraform/
-terraform/terraform.tfvars
-terraform/terraform.tfstate
-terraform/terraform.tfstate.*
-terraform/*.tfplan
+ansible/inventories/ovh/group_vars/secrets.local.yml
+
+# Legacy inventory secret overrides
+ansible/inventories/*/group_vars/secrets.local.yml
+
+# Terraform (Azure) local state and overrides
+terraform-azure/.terraform/
+terraform-azure/terraform.tfstate
+terraform-azure/terraform.tfstate.*
+terraform-azure/terraform.tfvars
+terraform-azure/*.tfplan
+terraform-azure/generated/*.pem
