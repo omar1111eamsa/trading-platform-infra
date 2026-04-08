@@ -3,7 +3,56 @@ map $http_upgrade $connection_upgrade {
     ''      close;
 }
 
+{# When API and terminal share one hostname (e.g. raw public IP), route by path instead of two duplicate server_name blocks. #}
+{% set same_host = (platform_api_domain | trim) == (platform_terminal_domain | trim) %}
+
+{% macro proxy_backend() %}
+        proxy_pass http://127.0.0.1:8081;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection $connection_upgrade;
+        proxy_read_timeout 86400;
+{% endmacro %}
+
+{% macro proxy_ui() %}
+        proxy_pass http://127.0.0.1:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection $connection_upgrade;
+        proxy_read_timeout 86400;
+{% endmacro %}
+
 {% if le_cert.stat is defined and le_cert.stat.exists | default(false) %}
+{% if same_host %}
+server {
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+    server_name {{ platform_api_domain }};
+
+    ssl_certificate     /etc/letsencrypt/live/{{ platform_api_domain }}/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/{{ platform_api_domain }}/privkey.pem;
+    ssl_protocols       TLSv1.2 TLSv1.3;
+    ssl_prefer_server_ciphers off;
+
+    location ^~ /ws {
+{{ proxy_backend() }}
+    }
+    location ~ ^/(api|auth|health|me|admin)(/|$) {
+{{ proxy_backend() }}
+    }
+    location / {
+{{ proxy_ui() }}
+    }
+}
+{% else %}
 server {
     listen 443 ssl http2;
     listen [::]:443 ssl http2;
@@ -15,15 +64,7 @@ server {
     ssl_prefer_server_ciphers off;
 
     location / {
-        proxy_pass http://127.0.0.1:8081;
-        proxy_http_version 1.1;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection $connection_upgrade;
-        proxy_read_timeout 86400;
+{{ proxy_backend() }}
     }
 }
 
@@ -38,19 +79,41 @@ server {
     ssl_prefer_server_ciphers off;
 
     location / {
-        proxy_pass http://127.0.0.1:3000;
-        proxy_http_version 1.1;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection $connection_upgrade;
-        proxy_read_timeout 86400;
+{{ proxy_ui() }}
     }
 }
 {% endif %}
+{% endif %}
 
+{% if same_host %}
+server {
+    listen 80 default_server;
+    listen [::]:80 default_server;
+    server_name {{ platform_api_domain }} _;
+
+{% if le_cert.stat is defined and le_cert.stat.exists | default(false) %}
+    location ^~ /.well-known/acme-challenge/ {
+        root /var/www/html;
+    }
+    location / {
+        return 301 https://$host$request_uri;
+    }
+{% else %}
+    location ^~ /.well-known/acme-challenge/ {
+        root /var/www/html;
+    }
+    location ^~ /ws {
+{{ proxy_backend() }}
+    }
+    location ~ ^/(api|auth|health|me|admin)(/|$) {
+{{ proxy_backend() }}
+    }
+    location / {
+{{ proxy_ui() }}
+    }
+{% endif %}
+}
+{% else %}
 server {
     listen 80;
     listen [::]:80;
@@ -68,15 +131,7 @@ server {
         root /var/www/html;
     }
     location / {
-        proxy_pass http://127.0.0.1:8081;
-        proxy_http_version 1.1;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection $connection_upgrade;
-        proxy_read_timeout 86400;
+{{ proxy_backend() }}
     }
 {% endif %}
 }
@@ -98,15 +153,8 @@ server {
         root /var/www/html;
     }
     location / {
-        proxy_pass http://127.0.0.1:3000;
-        proxy_http_version 1.1;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection $connection_upgrade;
-        proxy_read_timeout 86400;
+{{ proxy_ui() }}
     }
 {% endif %}
 }
+{% endif %}

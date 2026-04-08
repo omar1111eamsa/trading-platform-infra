@@ -1,0 +1,11 @@
+# Copy to terraform.tfvars (gitignored) and fill in.
+# az login && cd SysteM/terraform-azure && terraform init && terraform plan
+
+location = "westeurope"
+prefix   = "trading-stage"
+
+# Your /32, or "Internet" for any client (weaker; use a very strong windows_admin_password).
+rdp_source_ranges = ["203.0.113.50/32"]
+
+# Windows Server admin (required)
+windows_admin_password = "ChangeMe-StrongP@ssw0rd!"

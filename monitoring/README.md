@@ -1,45 +1,27 @@
 # Monitoring
 
-Runtime monitoring for the test environment is deployed through the Ansible `monitoring` role.
+Runtime monitoring for the OVH environment is deployed through the Ansible `monitoring` role.
 
-Current stack:
+## Current Stack
 
-- `Uptime Kuma` exposed on the Linux VM at port `3001` (Ansible `linux_ui` play; host name `trading-platform-vm-ui` when `linux_vm_name` is default)
-- public URL: `http://REDACTED_IP:3001`
+- `Uptime Kuma` is exposed on the VPS on port `3001`
+- service compose file path: `/opt/monitoring/docker-compose.yml`
 
-The compose definition rendered to the VM lives under:
+Current host:
+- `REDACTED_VPS_IP`
 
-- `/opt/monitoring/docker-compose.yml`
+## Suggested Monitors
 
-## Uptime Kuma Configuration Guide
+Public checks:
+- `https://terminal.example.com`
+- `https://api.example.com/health` (keyword: `healthy`)
+- `https://dashboard.example.com`
 
-To accurately monitor the system without exposing the databases publicly, setup your monitors in your dashboard identically to this:
+Internal checks (from Uptime Kuma on the same host):
+- PostgreSQL: `127.0.0.1:5432` (TCP)
+- RabbitMQ: `127.0.0.1:5672` (TCP)
+- InfluxDB: `http://127.0.0.1:8086/ping`
 
-### PUBLIC Monitors (Testing the Firewalls + App)
-1. **Frontend Dashboard:**
-   - Type: `HTTP(s)`
-   - URL: `http://REDACTED_IP:80`
-2. **Backend API:**
-   - Type: `HTTP(s) - Keyword`
-   - URL: `http://api.example.com:8081/health`
-   - Keyword: `healthy`
-
-### INTERNAL Monitors (Testing the isolated VPC network)
-3. **PostgreSQL Database:**
-   - Type: `TCP Port`
-   - Hostname: `10.132.0.3`
-   - Port: `5432`
-4. **RabbitMQ Broker:**
-   - Type: `TCP Port`
-   - Hostname: `10.132.0.3`
-   - Port: `5672`
-5. **InfluxDB:**
-   - Type: `HTTP(s)`
-   - URL: `http://10.132.0.3:8086/ping`
-6. **Windows MT5 Server:**
-   - Type: `Ping`
-   - Hostname: `10.132.0.4`
-
-Important:
-
-- the backend monitor should now use `http://api.example.com:8081/health`
+Notes:
+- all public monitors should use HTTPS
+- if port `3001` is not publicly open, access Uptime Kuma using SSH tunnel

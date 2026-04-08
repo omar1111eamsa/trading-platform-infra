@@ -18,7 +18,11 @@
 
 - name: Set GitHub runner paths
   ansible.builtin.set_fact:
-    github_runner_dir: "{{ github_runner_base_dir }}/{{ github_runner_name }}"
+    github_runner_dir: >-
+      {{
+        github_runner_dir_override
+        | default(github_runner_base_dir ~ '/' ~ (github_runner_dir_name | default(github_runner_name)))
+      }}
     github_runner_url: >-
       {{
         ('https://github.com/' ~ github_runner_organization)

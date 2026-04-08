@@ -1,1 +1,0 @@
-# Optional per-host overrides. App layout for Linux VM uses group_vars/linux_ui.yml and group_vars/linux_api.yml.
