@@ -9,11 +9,38 @@
 
 - name: Copy centralized docker-compose.yml to VM
   ansible.builtin.copy:
-    src: "{{ playbook_dir }}/../docker-compose.yml"
+    src: "{{ playbook_dir }}/../../docker-compose.yml"
     dest: /opt/tradingplatform/docker-compose.yml
     owner: deploy
     group: deploy
     mode: '0644'
+
+- name: Dynamically structure .env file for services
+  ansible.builtin.copy:
+    dest: /opt/tradingplatform/.env
+    owner: deploy
+    group: deploy
+    mode: '0600'
+    content: |
+      {% if backend_env is defined %}
+      {% for key, value in backend_env.items() %}
+      {{ key | upper }}={{ value }}
+      {% endfor %}
+      {% endif %}
+      {% if frontend_env is defined %}
+      {% for key, value in frontend_env.items() %}
+      {{ key | upper }}={{ value }}
+      {% endfor %}
+      {% endif %}
+      {% if ui_terminal_env is defined %}
+      {% for key, value in ui_terminal_env.items() %}
+      {{ key | upper }}={{ value }}
+      {% endfor %}
+      {% endif %}
+      API_DOMAIN={{ platform_api_domain | default('api.example.com') }}
+      TERMINAL_DOMAIN={{ platform_terminal_domain | default('terminal.example.com') }}
+      CERTBOT_ADMIN_EMAIL={{ certbot_admin_email | default('admin@example.com') }}
+
 
 - name: Start the Docker Compose stack
   community.docker.docker_compose_v2:

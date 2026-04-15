@@ -22,3 +22,11 @@ terraform-azure/generated/*.pem
 .env.*
 *.pem
 *.key
+
+# Terraform AWS ignores
+terraform-aws/.terraform/
+terraform-aws/*.tfstate
+terraform-aws/*.tfstate.*
+terraform-aws/.terraform.lock.hcl
+terraform-aws/*.pem
+

@@ -1,6 +1,0 @@
-nginx_edge_enabled: true
-nginx_edge_default_site_removed: true
-
-# Request certificates (DNS for these hosts must point at this server first).
-nginx_edge_letsencrypt: false
-certbot_admin_email: ""

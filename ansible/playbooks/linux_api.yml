@@ -18,5 +18,4 @@
     - admin_user
     - deploy_user
     - ssh_hardening
-    - nginx_edge
     - system_deploy
