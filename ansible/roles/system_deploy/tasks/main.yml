@@ -46,6 +46,7 @@
       {% endif %}
       API_DOMAIN={{ platform_api_domain | default('api.example.com') }}
       TERMINAL_DOMAIN={{ platform_terminal_domain | default('terminal.example.com') }}
+      DASHBOARD_DOMAIN={{ platform_dashboard_domain | default('dashboard.example.com') }}
       CERTBOT_ADMIN_EMAIL={{ certbot_admin_email | default('admin@example.com') }}
       UI_TERMINAL_IMAGE=ghcr.io/trading-terminal2025/ui-terminal:{{ deployment_tag | default('solution-latest') }}
       TERMINAL_DASHBOARD_IMAGE=ghcr.io/trading-terminal2025/terminal-dashboard:{{ deployment_tag | default('solution-latest') }}
