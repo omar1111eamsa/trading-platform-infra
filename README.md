@@ -3,29 +3,22 @@
 Infrastructure code for the trading platform.
 
 Current production/stage model:
-- OVH VPS for API, terminal UI, and dashboard deployments (via Ansible)
+- Linux VMs deploying via 100% portable Centralized Docker Compose Orchestration (Managed by Watchtower)
 - Azure Terraform kept only for optional Windows VM provisioning (MT5)
 
 ## Folder Layout
 
-- `ansible/`: host bootstrap, app runtime config, and GitHub self-hosted runners
+- `ansible/`: host bootstrap and configuration transfer
 - `docs/`: operational and architecture documentation
 - `monitoring/`: Uptime Kuma assets used by Ansible
 - `terraform-azure/`: Azure Terraform stack (Windows VM only)
+- `docker-compose.yml`: Master orchestration running all databases, frontends, backends, and Watchtower natively.
 
-## Ansible Runtime Model (OVH)
+## Ansible Runtime Model
 
-Ansible inventory groups map to logical services on the same VPS:
-- `linux_api` -> backend (`stable-backend-`) + Nginx Edge Proxy (Reverse proxy mapped via `/etc/nginx/sites-enabled/app-edge.conf` processing Let's Encrypt SSL/TLS certificates)
-- `linux_ui` -> terminal frontend (`UI-Terminal-`) + monitoring
-- `linux_dashboard` -> admin dashboard (`terminal-dashboard`)
+Ansible no longer manages continuous application deployment or GitHub Runner agents. It is purely used to securely push `.env` configurations and copy the `docker-compose.yml` file to the VM, acting as an immutable infrastructure provisioner. All application deployments are handled instantly by **Watchtower**.
 
-Runner labels expected by CI:
-- `trading-platform-vm-api`
-- `trading-platform-vm-ui`
-- `trading-platform-vm-dashboard`
-
-## Quick Start (OVH)
+## Quick Start
 
 ```bash
 cd ansible
@@ -34,8 +27,8 @@ ansible-galaxy collection install -r collections/requirements.yml
 ```
 
 Before deploying:
-- set OVH host IP(s) in `ansible/inventories/ovh/hosts.yml`
-- set secrets in `ansible/inventories/ovh/group_vars/secrets.local.yml` or vault
+- Configure target VMs in `ansible/inventories/ovh/hosts.yml` (or your preferred environment)
+- Set secrets in `ansible/inventories/ovh/group_vars/secrets.local.yml` or vault
 
 ## Documentation Map
 
