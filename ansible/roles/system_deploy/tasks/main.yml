@@ -1,0 +1,22 @@
+---
+- name: Ensure the trading platform directory exists
+  ansible.builtin.file:
+    path: /opt/tradingplatform
+    state: directory
+    owner: deploy
+    group: deploy
+    mode: '0755'
+
+- name: Copy centralized docker-compose.yml to VM
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/../docker-compose.yml"
+    dest: /opt/tradingplatform/docker-compose.yml
+    owner: deploy
+    group: deploy
+    mode: '0644'
+
+- name: Start the Docker Compose stack
+  community.docker.docker_compose_v2:
+    project_src: /opt/tradingplatform
+    state: present
+    pull: always
