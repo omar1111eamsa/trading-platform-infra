@@ -15,6 +15,13 @@
     group: deploy
     mode: '0644'
 
+- name: Log into GHCR to ensure private docker containers can pull
+  community.docker.docker_login:
+    registry_url: ghcr.io
+    username: trading-terminal2025
+    password: "{{ github_pat }}"
+  when: github_pat is defined and github_pat != ""
+
 - name: Dynamically structure .env file for services
   ansible.builtin.copy:
     dest: /opt/tradingplatform/.env
@@ -40,6 +47,12 @@
       API_DOMAIN={{ platform_api_domain | default('api.example.com') }}
       TERMINAL_DOMAIN={{ platform_terminal_domain | default('terminal.example.com') }}
       CERTBOT_ADMIN_EMAIL={{ certbot_admin_email | default('admin@example.com') }}
+      UI_TERMINAL_IMAGE=ghcr.io/trading-terminal2025/ui-terminal:{{ deployment_tag | default('solution-latest') }}
+      TERMINAL_DASHBOARD_IMAGE=ghcr.io/trading-terminal2025/terminal-dashboard:{{ deployment_tag | default('solution-latest') }}
+      BACKEND_API_IMAGE=ghcr.io/trading-terminal2025/terminal-backend-api:{{ deployment_tag | default('solution-latest') }}
+      MT5_BRIDGE_IMAGE=ghcr.io/trading-terminal2025/terminal-mt5-bridge:{{ deployment_tag | default('solution-latest') }}
+      MARKET_DATA_BRIDGE_IMAGE=ghcr.io/trading-terminal2025/terminal-market-data-bridge:{{ deployment_tag | default('solution-latest') }}
+      OMS_IMAGE=ghcr.io/trading-terminal2025/terminal-backend-oms:{{ deployment_tag | default('solution-latest') }}
 
 
 - name: Start the Docker Compose stack
