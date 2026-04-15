@@ -16,7 +16,7 @@ Current production/stage model:
 ## Ansible Runtime Model (OVH)
 
 Ansible inventory groups map to logical services on the same VPS:
-- `linux_api` -> backend (`stable-backend-`) + nginx edge
+- `linux_api` -> backend (`stable-backend-`) + Nginx Edge Proxy (Reverse proxy mapped via `/etc/nginx/sites-enabled/app-edge.conf` processing Let's Encrypt SSL/TLS certificates)
 - `linux_ui` -> terminal frontend (`UI-Terminal-`) + monitoring
 - `linux_dashboard` -> admin dashboard (`terminal-dashboard`)
 
