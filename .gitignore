@@ -16,3 +16,9 @@ terraform-azure/terraform.tfstate.*
 terraform-azure/terraform.tfvars
 terraform-azure/*.tfplan
 terraform-azure/generated/*.pem
+
+# Cleanup Ignores
+.env
+.env.*
+*.pem
+*.key
