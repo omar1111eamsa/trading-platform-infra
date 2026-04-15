@@ -1,2 +1,0 @@
-# Non-empty value registers an organization runner (--url https://github.com/<org>), which can run jobs for any repo allowed by the runner group (Settings → Actions → Runner groups).
-github_runner_organization: ""

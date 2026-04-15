@@ -1,4 +1,4 @@
-# API + nginx before UI so a failure registering the UI GitHub runner does not skip the backend stack.
+# Master site deployment
 - import_playbook: linux_api.yml
 - import_playbook: linux_dashboard.yml
 - import_playbook: linux_ui.yml
