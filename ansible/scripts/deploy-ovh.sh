@@ -2,13 +2,26 @@
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-INV="$ROOT_DIR/inventories/ovh/hosts.yml"
+NEW_SCRIPT="$ROOT_DIR/scripts/deploy.sh"
+OVH_INV="$ROOT_DIR/inventories/ovh/hosts.yml"
 
-if [[ ! -f "$INV" ]]; then
-  echo "Missing inventory: $INV"
+if [[ ! -x "$NEW_SCRIPT" ]]; then
+  echo "Missing script: $NEW_SCRIPT"
   exit 1
 fi
 
-cd "$ROOT_DIR"
-ansible-galaxy collection install -r collections/requirements.yml
-ansible-playbook -i "$INV" playbooks/site.yml "$@"
+echo "deploy-ovh.sh is deprecated. Use scripts/deploy.sh instead."
+
+has_inventory_arg=false
+for arg in "$@"; do
+  if [[ "$arg" == "-i" || "$arg" == "--inventory" ]]; then
+    has_inventory_arg=true
+    break
+  fi
+done
+
+if [[ "$has_inventory_arg" == "true" ]]; then
+  exec "$NEW_SCRIPT" "$@"
+else
+  exec "$NEW_SCRIPT" -i "$OVH_INV" "$@"
+fi

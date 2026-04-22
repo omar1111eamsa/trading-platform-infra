@@ -23,7 +23,7 @@ Ansible no longer manages continuous application deployment or GitHub Runner age
 ```bash
 cd ansible
 ansible-galaxy collection install -r collections/requirements.yml
-./scripts/deploy-ovh.sh
+./scripts/deploy.sh -i inventories/ovh/hosts.yml
 ```
 
 Before deploying:
