@@ -48,6 +48,8 @@
       TERMINAL_DOMAIN={{ platform_terminal_domain | default('terminal.example.com') }}
       DASHBOARD_DOMAIN={{ platform_dashboard_domain | default('dashboard.example.com') }}
       CERTBOT_ADMIN_EMAIL={{ certbot_admin_email | default('admin@example.com') }}
+      GHCR_USERNAME=trading-terminal2025
+      GHCR_TOKEN={{ github_pat | default('') }}
       UI_TERMINAL_IMAGE=ghcr.io/trading-terminal2025/ui-terminal:{{ deployment_tag | default('solution-latest') }}
       TERMINAL_DASHBOARD_IMAGE=ghcr.io/trading-terminal2025/terminal-dashboard:{{ deployment_tag | default('solution-latest') }}
       BACKEND_API_IMAGE=ghcr.io/trading-terminal2025/terminal-backend-api:{{ deployment_tag | default('solution-latest') }}
