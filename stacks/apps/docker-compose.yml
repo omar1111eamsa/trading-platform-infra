@@ -56,6 +56,9 @@ services:
     <<: *go-service
     # {"$imagepolicy": "trading-terminal:oms:tag"}
     image: ghcr.io/trading-terminal2025/terminal-backend-oms:sha-22fcddb8cc5ae002c3b67b258043b020d60d233b
+    environment:
+      ADMIN_USERNAME: ${ADMIN_USERNAME:-change-me}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-change-me-1234}
     depends_on:
       backend-api:
         condition: service_started
