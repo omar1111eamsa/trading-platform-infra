@@ -43,7 +43,7 @@ services:
       JWT_SECRET: ${JWT_SECRET:-change-me}
       ADMIN_USERNAME: ${ADMIN_USERNAME:-change-me}
       ADMIN_EMAIL: ${ADMIN_EMAIL:-change-me@example.com}
-      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-change-me}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-change-me-1234}
     # Cross-stack depends_on is not supported by Docker Compose.
     # Infra readiness is enforced by deploying trading-infra before trading-apps.
     # backend-api handles dependency retries at runtime.
