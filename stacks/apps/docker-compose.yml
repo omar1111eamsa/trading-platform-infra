@@ -47,12 +47,6 @@ services:
     # Cross-stack depends_on is not supported by Docker Compose.
     # Infra readiness is enforced by deploying trading-infra before trading-apps.
     # backend-api handles dependency retries at runtime.
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8081/health"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 20s
     logging: *default-logging
     mem_limit: 2048m
     mem_reservation: 1024m
@@ -64,7 +58,7 @@ services:
     image: ghcr.io/trading-terminal2025/terminal-backend-oms:sha-cedf5b525e01ef96485631e199eca205dab659ed
     depends_on:
       backend-api:
-        condition: service_healthy
+        condition: service_started
     logging: *default-logging
     mem_limit: 1536m
     mem_reservation: 768m
