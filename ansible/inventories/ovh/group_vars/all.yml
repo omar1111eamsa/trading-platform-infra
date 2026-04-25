@@ -16,9 +16,6 @@ deploy_group: deploy
 deploy_home: "/home/{{ deploy_user }}"
 app_root: /opt/apps
 
-# Runner labels and naming expected by workflow runs-on selectors.
-linux_vm_name: trading-platform-vm
-
 docker_apt_arch_map:
   x86_64: amd64
   aarch64: arm64
@@ -26,8 +23,6 @@ docker_apt_arch: "{{ docker_apt_arch_map[ansible_facts['architecture']] | defaul
 
 admin_ssh_public_keys: []
 deploy_ssh_public_keys: []
-
-github_pat: ""
 
 common_packages:
   - acl
@@ -52,29 +47,6 @@ ssh_max_auth_tries: "3"
 ssh_login_grace_time: "30"
 fail2ban_enabled: true
 
-backend_env:
-  port: "8081"
-  postgres_dsn: "postgres://app:app@postgres:5432/terminal_backend?sslmode=disable"
-  jwt_secret: "change-me"
-  jwt_expires_in_minutes: "60"
-  admin_username: "change-me"
-  admin_email: "change-me@example.com"
-  admin_password: "change-me-now"
-  rabbitmq_url: "amqp://guest:guest@rabbitmq:5672/"
-  rabbitmq_host: "rabbitmq"
-  rabbitmq_port: "5672"
-  rabbitmq_user: "guest"
-  rabbitmq_pass: "guest"
-  backend_api_url: "http://backend-api:8081"
-  pgadmin_default_email: "admin@app.example.com"
-  pgadmin_default_password: "platformadmin"
-  influxdb_url: "http://influxdb:8086"
-  influxdb_token: "REDACTED_TOKEN"
-  influxdb_org: "terminal"
-  influxdb_bucket_m1: "candles_m1"
-  influxdb_bucket_m5: "candles_m5"
-  influxdb_bucket_long: "candles_long"
-
 platform_api_domain: api.test.example.com
 platform_terminal_domain: terminal.test.example.com
 platform_dashboard_domain: dashboard.test.example.com
@@ -89,22 +61,6 @@ traefik_enabled: true
 traefik_letsencrypt: true
 traefik_acme_email: "{{ certbot_admin_email }}"
 
-frontend_env:
-  vite_api_url: "{{ public_url_scheme }}://{{ platform_api_domain }}"
-  vite_ws_url: "{{ 'wss' if public_url_scheme == 'https' else 'ws' }}://{{ platform_api_domain }}/ws"
-
-ui_terminal_env:
-  next_public_api_url: "{{ public_url_scheme }}://{{ platform_api_domain }}"
-  next_public_ws_url: "{{ 'wss' if public_url_scheme == 'https' else 'ws' }}://{{ platform_api_domain }}/ws"
-
 monitoring_enabled: true
 monitoring_dir: /opt/monitoring
 monitoring_port: "3001"
-
-github_runner_version: "2.333.1"
-github_runner_arch_map:
-  x86_64: x64
-  aarch64: arm64
-github_runner_arch: "{{ github_runner_arch_map[ansible_facts['architecture']] | default('x64') }}"
-github_runner_base_dir: /opt/github-actions-runner
-github_runner_work_dir: _work

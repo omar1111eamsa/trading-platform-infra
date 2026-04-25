@@ -18,8 +18,5 @@
     - admin_user
     - deploy_user
     - ssh_hardening
-    - app_checkout
-    - app_env
-    - github_runner
     - traefik
     - portainer
