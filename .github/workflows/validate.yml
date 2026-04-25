@@ -2,10 +2,11 @@ name: Validate stacks
 
 on:
   pull_request:
+    branches: [new-infra]
     paths:
       - 'stacks/**'
   push:
-    branches: [main, new-infra]
+    branches: [new-infra]
     paths:
       - 'stacks/**'
 
