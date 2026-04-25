@@ -9,6 +9,9 @@ ansible/inventories/ovh/group_vars/secrets.local.yml
 # Legacy inventory secret overrides
 ansible/inventories/*/group_vars/secrets.local.yml
 
+# Local deployment/bootstrap secrets
+secrets.env
+
 # Terraform (Azure) local state and overrides
 terraform-azure/.terraform/
 terraform-azure/terraform.tfstate

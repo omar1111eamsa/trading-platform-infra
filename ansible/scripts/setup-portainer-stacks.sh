@@ -1,6 +1,17 @@
 #!/bin/bash
 set -euo pipefail
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd "${SCRIPT_DIR}/../.." && pwd)"
+SECRETS_ENV_FILE="${SECRETS_ENV_FILE:-${REPO_ROOT}/secrets.env}"
+
+if [ -f "${SECRETS_ENV_FILE}" ]; then
+  set -a
+  # shellcheck disable=SC1090
+  source "${SECRETS_ENV_FILE}"
+  set +a
+fi
+
 PORTAINER_URL="${PORTAINER_URL:-https://127.0.0.1:9443}"
 PORTAINER_USER="${PORTAINER_USER:-admin}"
 PORTAINER_PASS="${PORTAINER_ADMIN_PASSWORD:?PORTAINER_ADMIN_PASSWORD is required}"
