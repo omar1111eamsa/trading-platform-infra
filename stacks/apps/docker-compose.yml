@@ -101,7 +101,7 @@ services:
 
   dashboard:
     # {"$imagepolicy": "trading-terminal:terminal-dashboard:tag"}
-    image: ghcr.io/trading-terminal2025/terminal-dashboard:sha-6ebda1a9ac45e5c4f3a79c4ef813fc21d251e180
+    image: ghcr.io/trading-terminal2025/terminal-dashboard:sha-3d19df2e97bc49edb6696a5eec72bd36e868846a
     ports:
       - "127.0.0.1:3002:80"
     env_file:
