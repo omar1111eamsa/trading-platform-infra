@@ -21,7 +21,8 @@ x-go-service: &go-service
   tmpfs:
     - /tmp
   env_file:
-    - .env
+    - path: .env
+      required: false
 
 services:
   backend-api:
@@ -93,7 +94,8 @@ services:
     ports:
       - "127.0.0.1:3000:3000"
     env_file:
-      - .env
+      - path: .env
+        required: false
     restart: unless-stopped
     logging: *default-logging
     mem_limit: 1024m
@@ -105,7 +107,8 @@ services:
     ports:
       - "127.0.0.1:3002:80"
     env_file:
-      - .env
+      - path: .env
+        required: false
     restart: unless-stopped
     logging: *default-logging
     mem_limit: 512m
