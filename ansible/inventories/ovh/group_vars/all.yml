@@ -81,9 +81,13 @@ platform_dashboard_domain: dashboard.test.example.com
 platform_portainer_domain: portainer.test.example.com
 public_url_scheme: https
 
-nginx_edge_enabled: true
-nginx_edge_letsencrypt: true
-certbot_admin_email: ""
+nginx_edge_enabled: false
+nginx_edge_letsencrypt: false
+certbot_admin_email: "admin@example.com"
+
+traefik_enabled: true
+traefik_letsencrypt: true
+traefik_acme_email: "{{ certbot_admin_email }}"
 
 frontend_env:
   vite_api_url: "{{ public_url_scheme }}://{{ platform_api_domain }}"

@@ -1,0 +1,72 @@
+---
+- name: Configure Traefik reverse proxy
+  when: traefik_enabled | default(true) | bool
+  block:
+    - name: Ensure ACME email is set when Let's Encrypt is enabled
+      ansible.builtin.assert:
+        that:
+          - (traefik_acme_email | default('') | trim | length) > 0
+        fail_msg: "Set traefik_acme_email when traefik_letsencrypt=true"
+      when: traefik_letsencrypt | bool
+
+    - name: Stop and disable nginx during Traefik migration
+      ansible.builtin.service:
+        name: nginx
+        state: stopped
+        enabled: false
+      ignore_errors: true
+
+    - name: Ensure Traefik config directories exist
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        owner: root
+        group: root
+        mode: "0755"
+      loop:
+        - "{{ traefik_config_dir }}"
+        - "{{ traefik_dynamic_dir }}"
+        - "{{ traefik_acme_dir }}"
+
+    - name: Ensure ACME storage file exists with secure permissions
+      ansible.builtin.file:
+        path: "{{ traefik_acme_storage }}"
+        state: touch
+        owner: root
+        group: root
+        mode: "0600"
+
+    - name: Render Traefik static config
+      ansible.builtin.template:
+        src: traefik.yml.j2
+        dest: "{{ traefik_config_dir }}/traefik.yml"
+        owner: root
+        group: root
+        mode: "0644"
+
+    - name: Render Traefik dynamic config
+      ansible.builtin.template:
+        src: dynamic.yml.j2
+        dest: "{{ traefik_dynamic_dir }}/dynamic.yml"
+        owner: root
+        group: root
+        mode: "0644"
+
+    - name: Deploy Traefik container
+      community.docker.docker_container:
+        name: traefik
+        image: "{{ traefik_image }}"
+        state: started
+        restart_policy: unless-stopped
+        network_mode: host
+        volumes:
+          - /var/run/docker.sock:/var/run/docker.sock:ro
+          - "{{ traefik_config_dir }}/traefik.yml:/etc/traefik/traefik.yml:ro"
+          - "{{ traefik_dynamic_dir }}:/etc/traefik/dynamic:ro"
+          - "{{ traefik_acme_storage }}:/etc/traefik/acme/acme.json"
+        healthcheck:
+          test: ["CMD", "traefik", "healthcheck", "--ping"]
+          interval: 10s
+          timeout: 5s
+          retries: 5
+          start_period: 20s

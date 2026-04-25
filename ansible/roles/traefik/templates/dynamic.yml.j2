@@ -1,0 +1,67 @@
+http:
+  routers:
+    api-router:
+      rule: "Host(`{{ traefik_api_domain }}`)"
+      entryPoints:
+        - websecure
+      service: backend-api
+{% if traefik_letsencrypt | bool %}
+      tls:
+        certResolver: letsencrypt
+{% endif %}
+
+    terminal-router:
+      rule: "Host(`{{ traefik_terminal_domain }}`)"
+      entryPoints:
+        - websecure
+      service: ui-terminal
+{% if traefik_letsencrypt | bool %}
+      tls:
+        certResolver: letsencrypt
+{% endif %}
+
+    dashboard-router:
+      rule: "Host(`{{ traefik_dashboard_domain }}`)"
+      entryPoints:
+        - websecure
+      service: terminal-dashboard
+{% if traefik_letsencrypt | bool %}
+      tls:
+        certResolver: letsencrypt
+{% endif %}
+
+    portainer-router:
+      rule: "Host(`{{ traefik_portainer_domain }}`)"
+      entryPoints:
+        - websecure
+      service: portainer
+{% if traefik_letsencrypt | bool %}
+      tls:
+        certResolver: letsencrypt
+{% endif %}
+
+  services:
+    backend-api:
+      loadBalancer:
+        servers:
+          - url: "http://127.0.0.1:8081"
+
+    ui-terminal:
+      loadBalancer:
+        servers:
+          - url: "http://127.0.0.1:3000"
+
+    terminal-dashboard:
+      loadBalancer:
+        servers:
+          - url: "http://127.0.0.1:3002"
+
+    portainer:
+      loadBalancer:
+        serversTransport: portainer-insecure
+        servers:
+          - url: "https://127.0.0.1:9443"
+
+serversTransports:
+  portainer-insecure:
+    insecureSkipVerify: true

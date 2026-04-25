@@ -1,0 +1,14 @@
+traefik_enabled: true
+traefik_image: traefik:v3.1
+traefik_config_dir: /opt/traefik
+traefik_dynamic_dir: "{{ traefik_config_dir }}/dynamic"
+traefik_acme_dir: "{{ traefik_config_dir }}/acme"
+traefik_acme_storage: "{{ traefik_acme_dir }}/acme.json"
+
+traefik_letsencrypt: true
+traefik_acme_email: ""
+
+traefik_api_domain: "{{ platform_api_domain }}"
+traefik_terminal_domain: "{{ platform_terminal_domain }}"
+traefik_dashboard_domain: "{{ platform_dashboard_domain }}"
+traefik_portainer_domain: "{{ platform_portainer_domain }}"
