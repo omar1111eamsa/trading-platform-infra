@@ -28,7 +28,7 @@ services:
   backend-api:
     <<: *go-service
     # {"$imagepolicy": "trading-terminal:backend-api:tag"}
-    image: ghcr.io/trading-terminal2025/backend-api:latest
+    image: ghcr.io/trading-terminal2025/terminal-backend-api:new-infra-latest
     ports:
       - "8081:8081"
     environment:
@@ -57,7 +57,7 @@ services:
   oms:
     <<: *go-service
     # {"$imagepolicy": "trading-terminal:oms:tag"}
-    image: ghcr.io/trading-terminal2025/oms:latest
+    image: ghcr.io/trading-terminal2025/terminal-backend-oms:new-infra-latest
     depends_on:
       backend-api:
         condition: service_healthy
@@ -69,7 +69,7 @@ services:
   mt5-bridge:
     <<: *go-service
     # {"$imagepolicy": "trading-terminal:mt5-bridge:tag"}
-    image: ghcr.io/trading-terminal2025/mt5-bridge:latest
+    image: ghcr.io/trading-terminal2025/terminal-mt5-bridge:new-infra-latest
     ports:
       - "5556:5556"
     logging: *default-logging
@@ -80,7 +80,7 @@ services:
   market-data-bridge:
     <<: *go-service
     # {"$imagepolicy": "trading-terminal:market-data-bridge:tag"}
-    image: ghcr.io/trading-terminal2025/market-data-bridge:latest
+    image: ghcr.io/trading-terminal2025/terminal-market-data-bridge:new-infra-latest
     ports:
       - "5558:5558"
     logging: *default-logging
@@ -90,7 +90,7 @@ services:
 
   ui-terminal:
     # {"$imagepolicy": "trading-terminal:ui-terminal:tag"}
-    image: ghcr.io/trading-terminal2025/ui-terminal:latest
+    image: ghcr.io/trading-terminal2025/ui-terminal:new-infra-latest
     ports:
       - "127.0.0.1:3000:3000"
     env_file:
@@ -103,7 +103,7 @@ services:
 
   dashboard:
     # {"$imagepolicy": "trading-terminal:terminal-dashboard:tag"}
-    image: ghcr.io/trading-terminal2025/terminal-dashboard:latest
+    image: ghcr.io/trading-terminal2025/terminal-dashboard:new-infra-latest
     ports:
       - "127.0.0.1:3002:80"
     env_file:
