@@ -1,0 +1,72 @@
+bootstrap_ansible_user: ubuntu
+admin_user: hodeconlimited
+admin_group: "{{ admin_user }}"
+admin_home: "/home/{{ admin_user }}"
+
+ansible_user: "{{ bootstrap_ansible_user }}"
+ansible_port: 22
+ansible_ssh_common_args: "-o IdentitiesOnly=yes -o PreferredAuthentications=password -o PubkeyAuthentication=no"
+# Set with --private-key or in inventory host vars.
+
+# If API and UI are same OVH VM, keep this true and set same ansible_host in both groups.
+ovh_single_vm: true
+
+deploy_user: deploy
+deploy_group: deploy
+deploy_home: "/home/{{ deploy_user }}"
+app_root: /opt/apps
+
+docker_apt_arch_map:
+  x86_64: amd64
+  aarch64: arm64
+docker_apt_arch: "{{ docker_apt_arch_map[ansible_facts['architecture']] | default('amd64') }}"
+
+admin_ssh_public_keys: []
+deploy_ssh_public_keys: []
+
+common_packages:
+  - acl
+  - apt-transport-https
+  - ca-certificates
+  - curl
+  - fail2ban
+  - git
+  - gnupg
+  - lsb-release
+  - python3-pip
+  - rsync
+
+ssh_allow_users:
+  - "{{ bootstrap_ansible_user }}"
+  - "{{ admin_user }}"
+  - "{{ deploy_user }}"
+ssh_password_authentication: "no"
+ssh_permit_root_login: "no"
+ssh_pubkey_authentication: "yes"
+ssh_max_auth_tries: "3"
+ssh_login_grace_time: "30"
+fail2ban_enabled: true
+
+platform_api_domain: api.test.example.com
+platform_terminal_domain: terminal.test.example.com
+platform_dashboard_domain: dashboard.test.example.com
+platform_portainer_domain: portainer.test.example.com
+platform_rabbitmq_domain: rabbitmq.test.example.com
+platform_influxdb_domain: influxdb.test.example.com
+platform_pgadmin_domain: pgadmin.test.example.com
+public_url_scheme: https
+
+nginx_edge_enabled: false
+nginx_edge_letsencrypt: false
+certbot_admin_email: "admin@example.com"
+
+traefik_enabled: true
+traefik_letsencrypt: true
+traefik_acme_email: "{{ certbot_admin_email }}"
+traefik_rabbitmq_domain: "{{ platform_rabbitmq_domain }}"
+traefik_influxdb_domain: "{{ platform_influxdb_domain }}"
+traefik_pgadmin_domain: "{{ platform_pgadmin_domain }}"
+
+monitoring_enabled: true
+monitoring_dir: /opt/monitoring
+monitoring_port: "3001"

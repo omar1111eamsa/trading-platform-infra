@@ -1,3 +1,8 @@
+{% set root_domain = traefik_api_domain | regex_replace('^[^.]+\\.', '') %}
+{% set rabbitmq_domain = (traefik_rabbitmq_domain | default('', true) | trim) if (traefik_rabbitmq_domain | default('', true) | trim | length > 0) else 'rabbitmq.' ~ root_domain %}
+{% set influxdb_domain = (traefik_influxdb_domain | default('', true) | trim) if (traefik_influxdb_domain | default('', true) | trim | length > 0) else 'influxdb.' ~ root_domain %}
+{% set pgadmin_domain = (traefik_pgadmin_domain | default('', true) | trim) if (traefik_pgadmin_domain | default('', true) | trim | length > 0) else 'pgadmin.' ~ root_domain %}
+
 http:
   routers:
     api-router:
@@ -40,6 +45,36 @@ http:
         certResolver: letsencrypt
 {% endif %}
 
+    rabbitmq-router:
+      rule: "Host(`{{ rabbitmq_domain }}`)"
+      entryPoints:
+        - websecure
+      service: rabbitmq-ui
+{% if traefik_letsencrypt | bool %}
+      tls:
+        certResolver: letsencrypt
+{% endif %}
+
+    influxdb-router:
+      rule: "Host(`{{ influxdb_domain }}`)"
+      entryPoints:
+        - websecure
+      service: influxdb-ui
+{% if traefik_letsencrypt | bool %}
+      tls:
+        certResolver: letsencrypt
+{% endif %}
+
+    pgadmin-router:
+      rule: "Host(`{{ pgadmin_domain }}`)"
+      entryPoints:
+        - websecure
+      service: pgadmin-ui
+{% if traefik_letsencrypt | bool %}
+      tls:
+        certResolver: letsencrypt
+{% endif %}
+
   services:
     backend-api:
       loadBalancer:
@@ -61,6 +96,21 @@ http:
         serversTransport: portainer-insecure
         servers:
           - url: "https://127.0.0.1:9443"
+
+    rabbitmq-ui:
+      loadBalancer:
+        servers:
+          - url: "http://127.0.0.1:15672"
+
+    influxdb-ui:
+      loadBalancer:
+        servers:
+          - url: "http://127.0.0.1:8086"
+
+    pgadmin-ui:
+      loadBalancer:
+        servers:
+          - url: "http://127.0.0.1:5050"
   serversTransports:
     portainer-insecure:
       insecureSkipVerify: true
