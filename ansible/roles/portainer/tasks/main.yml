@@ -1,0 +1,31 @@
+---
+- name: Create Portainer data volume
+  community.docker.docker_volume:
+    name: portainer_data
+    state: present
+
+- name: Deploy Portainer CE container
+  community.docker.docker_container:
+    name: portainer
+    image: portainer/portainer-ce:2.21.0
+    state: started
+    restart_policy: unless-stopped
+    ports:
+      - "127.0.0.1:9443:9443"
+      - "127.0.0.1:8000:8000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+    healthcheck:
+      test:
+        - CMD
+        - wget
+        - --no-verbose
+        - --tries=1
+        - --spider
+        - https://localhost:9443/api/status
+        - --no-check-certificate
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s

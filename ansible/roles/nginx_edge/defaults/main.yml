@@ -4,3 +4,5 @@ nginx_edge_default_site_removed: true
 # Request certificates (DNS for these hosts must point at this server first).
 nginx_edge_letsencrypt: false
 certbot_admin_email: ""
+platform_dashboard_domain: ""
+platform_portainer_domain: ""

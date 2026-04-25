@@ -75,8 +75,10 @@ backend_env:
   influxdb_bucket_m5: "candles_m5"
   influxdb_bucket_long: "candles_long"
 
-platform_api_domain: api.example.com
-platform_terminal_domain: terminal.example.com
+platform_api_domain: api.test.example.com
+platform_terminal_domain: terminal.test.example.com
+platform_dashboard_domain: dashboard.test.example.com
+platform_portainer_domain: portainer.test.example.com
 public_url_scheme: https
 
 nginx_edge_enabled: true

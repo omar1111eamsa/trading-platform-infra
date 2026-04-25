@@ -1,7 +1,7 @@
 app_name: UI-Terminal
 app_repo_path: Trading-Terminal2025/UI-Terminal-.git
 app_dir: "{{ app_root }}/UI-Terminal-"
-app_branch: test-ci
+app_branch: new-infra
 env_template: ui_terminal.env.j2
 env_dest: "{{ app_dir }}/.env"
 

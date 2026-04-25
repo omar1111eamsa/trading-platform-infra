@@ -22,3 +22,4 @@
     - app_env
     - github_runner
     - nginx_edge
+    - portainer

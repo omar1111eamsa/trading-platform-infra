@@ -71,8 +71,21 @@
           - "{{ platform_api_domain }}"
           - -d
           - "{{ platform_terminal_domain }}"
+          - -d
+          - "{{ dashboard_domain }}"
+          - -d
+          - "{{ portainer_domain }}"
       args:
         creates: /etc/letsencrypt/live/{{ platform_api_domain }}/fullchain.pem
+      vars:
+        dashboard_domain: >-
+          {{ platform_dashboard_domain | default('', true) | trim
+             if (platform_dashboard_domain | default('', true) | trim | length > 0)
+             else 'dashboard.' ~ (platform_api_domain | regex_replace('^[^.]+\\.', '')) }}
+        portainer_domain: >-
+          {{ platform_portainer_domain | default('', true) | trim
+             if (platform_portainer_domain | default('', true) | trim | length > 0)
+             else 'portainer.' ~ (platform_api_domain | regex_replace('^[^.]+\\.', '')) }}
       when:
         - nginx_edge_letsencrypt | default(false) | bool
         - (certbot_admin_email | default('')) | length > 0

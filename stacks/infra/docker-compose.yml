@@ -1,0 +1,106 @@
+# =============================================================
+# INFRA STACK — managed by SysteM repo
+# Deploy order: this stack MUST be healthy before apps stack
+# Managed by: Portainer GitOps — stacks/infra/docker-compose.yml
+# =============================================================
+
+x-logging: &default-logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+services:
+  rabbitmq:
+    image: rabbitmq:3-management@sha256:e582c0bc7766f3342496d8485efb5a1df782b5ce3886ad017e2eaae442311f69
+    ports:
+      - "127.0.0.1:5672:5672"
+      - "127.0.0.1:15672:15672"
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-guest}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASS:-guest}
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 15s
+    logging: *default-logging
+    mem_limit: 1536m
+    mem_reservation: 768m
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:16-alpine@sha256:20edbde7749f822887a1a022ad526fde0a47d6b2be9a8364433605cf65099416
+    ports:
+      - "127.0.0.1:5432:5432"
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-terminal_backend}
+      POSTGRES_USER: ${POSTGRES_USER:-app}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-app}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-app} -d ${POSTGRES_DB:-terminal_backend}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 10s
+    logging: *default-logging
+    mem_limit: 3072m
+    mem_reservation: 1536m
+    restart: unless-stopped
+
+  influxdb:
+    image: influxdb:2.7@sha256:3de4b6d4a18415d3d0e3b1c6409be46630bf6e5a01fcab3000b00c5c809128df
+    ports:
+      - "127.0.0.1:8086:8086"
+    volumes:
+      - influxdb_data:/var/lib/influxdb2
+      - influxdb_config:/etc/influxdb2
+    environment:
+      DOCKER_INFLUXDB_INIT_MODE: setup
+      DOCKER_INFLUXDB_INIT_USERNAME: ${INFLUXDB_USER:-admin}
+      DOCKER_INFLUXDB_INIT_PASSWORD: ${INFLUXDB_PASSWORD:-REDACTED_PASSWORD}
+      DOCKER_INFLUXDB_INIT_ORG: terminal
+      DOCKER_INFLUXDB_INIT_BUCKET: candles_m1
+      DOCKER_INFLUXDB_INIT_ADMIN_TOKEN: ${INFLUXDB_TOKEN:-REDACTED_TOKEN}
+    healthcheck:
+      test: ["CMD", "influx", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+    logging: *default-logging
+    mem_limit: 3072m
+    mem_reservation: 1536m
+    restart: unless-stopped
+
+  pgadmin:
+    image: dpage/pgadmin4:8@sha256:8a68677a97b8c8d1427dc915672a26d2c4a04376916a68256f53d669d6171be7
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL:-admin@example.com}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD:-platformadmin}
+      PGADMIN_CONFIG_SERVER_MODE: "False"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    logging: *default-logging
+    mem_limit: 512m
+    restart: unless-stopped
+
+volumes:
+  rabbitmq_data:
+  postgres_data:
+  influxdb_data:
+  influxdb_config:
+  pgadmin_data:
+
+networks:
+  default:
+    name: trading-infra
+    driver: bridge

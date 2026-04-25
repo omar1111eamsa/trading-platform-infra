@@ -1,0 +1,24 @@
+name: Validate stacks
+
+on:
+  pull_request:
+    paths:
+      - 'stacks/**'
+  push:
+    branches: [main, new-infra]
+    paths:
+      - 'stacks/**'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate infra compose syntax
+        run: docker compose -f stacks/infra/docker-compose.yml config --quiet
+
+      - name: Validate apps compose syntax
+        run: |
+          cp stacks/apps/.env.example stacks/apps/.env
+          docker compose -f stacks/apps/docker-compose.yml config --quiet
