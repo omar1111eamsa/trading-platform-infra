@@ -73,6 +73,12 @@ services:
     image: ghcr.io/trading-terminal2025/terminal-mt5-bridge:sha-22fcddb8cc5ae002c3b67b258043b020d60d233b
     ports:
       - "5556:5556"
+    environment:
+      RABBITMQ_URL: amqp://${RABBITMQ_USER:-guest}:${RABBITMQ_PASS:-guest}@rabbitmq:5672/
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: "5672"
+      RABBITMQ_USER: ${RABBITMQ_USER:-guest}
+      RABBITMQ_PASS: ${RABBITMQ_PASS:-guest}
     logging: *default-logging
     mem_limit: 1024m
     mem_reservation: 512m
@@ -84,6 +90,12 @@ services:
     image: ghcr.io/trading-terminal2025/terminal-market-data-bridge:sha-22fcddb8cc5ae002c3b67b258043b020d60d233b
     ports:
       - "5558:5558"
+    environment:
+      RABBITMQ_URL: amqp://${RABBITMQ_USER:-guest}:${RABBITMQ_PASS:-guest}@rabbitmq:5672/
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: "5672"
+      RABBITMQ_USER: ${RABBITMQ_USER:-guest}
+      RABBITMQ_PASS: ${RABBITMQ_PASS:-guest}
     logging: *default-logging
     mem_limit: 1024m
     mem_reservation: 512m
