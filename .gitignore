@@ -12,10 +12,11 @@ ansible/inventories/*/group_vars/secrets.local.yml
 # Local deployment/bootstrap secrets
 secrets.env
 
-# Terraform (Azure) local state and overrides
-terraform-azure/.terraform/
-terraform-azure/terraform.tfstate
-terraform-azure/terraform.tfstate.*
-terraform-azure/terraform.tfvars
-terraform-azure/*.tfplan
-terraform-azure/generated/*.pem
+# Terraform universal local state, binaries, and overrides
+**/.terraform/
+**/.terraform.*
+**/*.tfstate
+**/*.tfstate.*
+**/*.tfvars
+**/*.tfplan
+**/generated/*.pem
