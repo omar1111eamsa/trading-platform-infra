@@ -78,6 +78,22 @@ services:
     mem_reservation: 1536m
     restart: unless-stopped
 
+  redis:
+    image: redis:7-alpine@sha256:3f2bc1b45a1df9b8817d0eb7fda2e6cea55ab3f0f77089d9c1f2f3d0114c6cb3
+    command: ["redis-server", "--save", "", "--appendonly", "no"]
+    ports:
+      - "127.0.0.1:6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    logging: *default-logging
+    mem_limit: 768m
+    mem_reservation: 256m
+    restart: unless-stopped
+
   pgadmin:
     image: dpage/pgadmin4:8@sha256:8a68677a97b8c8d1427dc915672a26d2c4a04376916a68256f53d669d6171be7
     ports:
