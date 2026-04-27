@@ -113,7 +113,7 @@ services:
 
   ui-terminal:
     # {"$imagepolicy": "trading-terminal:ui-terminal:tag"}
-    image: ghcr.io/trading-platform/ui-terminal:sha-4f6bbf4209653265538d45356f7092009e25f1a6
+    image: ghcr.io/trading-platform/ui-terminal:sha-f2836187ac39eec3c6c9b99a75794699cfdd4b63
     ports:
       - "127.0.0.1:3000:3000"
     env_file:
