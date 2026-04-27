@@ -12,7 +12,7 @@ x-logging: &default-logging
 
 services:
   rabbitmq:
-    image: rabbitmq:3-management@sha256:e582c0bc7766f3342496d8485efb5a1df782b5ce3886ad017e2eaae442311f69
+    image: rabbitmq:3-management
     ports:
       - "127.0.0.1:5672:5672"
       - "127.0.0.1:15672:15672"
@@ -33,7 +33,7 @@ services:
     restart: unless-stopped
 
   postgres:
-    image: postgres:16-alpine@sha256:20edbde7749f822887a1a022ad526fde0a47d6b2be9a8364433605cf65099416
+    image: postgres:16-alpine
     ports:
       - "127.0.0.1:5432:5432"
     environment:
@@ -54,7 +54,7 @@ services:
     restart: unless-stopped
 
   influxdb:
-    image: influxdb:2.7@sha256:3de4b6d4a18415d3d0e3b1c6409be46630bf6e5a01fcab3000b00c5c809128df
+    image: influxdb:2.7
     ports:
       - "127.0.0.1:8086:8086"
     volumes:
@@ -79,7 +79,7 @@ services:
     restart: unless-stopped
 
   clickhouse:
-    image: clickhouse/clickhouse-server:24.8@sha256:c726f7d065f4a6f85e2faf49ea5df8e5ff7127972f355f79153ecfcc146f35f4
+    image: clickhouse/clickhouse-server:24.8
     ports:
       - "127.0.0.1:8123:8123"
       - "127.0.0.1:9000:9000"
@@ -102,7 +102,7 @@ services:
     restart: unless-stopped
 
   redis:
-    image: redis:7-alpine@sha256:3f2bc1b45a1df9b8817d0eb7fda2e6cea55ab3f0f77089d9c1f2f3d0114c6cb3
+    image: redis:7-alpine
     command: ["redis-server", "--save", "", "--appendonly", "no"]
     ports:
       - "127.0.0.1:6379:6379"
@@ -118,7 +118,7 @@ services:
     restart: unless-stopped
 
   pgadmin:
-    image: dpage/pgadmin4:8@sha256:8a68677a97b8c8d1427dc915672a26d2c4a04376916a68256f53d669d6171be7
+    image: dpage/pgadmin4:8
     ports:
       - "127.0.0.1:5050:80"
     environment:
