@@ -78,6 +78,29 @@ services:
     mem_reservation: 1536m
     restart: unless-stopped
 
+  clickhouse:
+    image: clickhouse/clickhouse-server:24.8@sha256:c726f7d065f4a6f85e2faf49ea5df8e5ff7127972f355f79153ecfcc146f35f4
+    ports:
+      - "127.0.0.1:8123:8123"
+      - "127.0.0.1:9000:9000"
+    environment:
+      CLICKHOUSE_DB: ${CLICKHOUSE_DB:-market_data}
+      CLICKHOUSE_USER: ${CLICKHOUSE_USER:-default}
+      CLICKHOUSE_PASSWORD: ${CLICKHOUSE_PASSWORD:-}
+    volumes:
+      - clickhouse_data:/var/lib/clickhouse
+      - clickhouse_logs:/var/log/clickhouse-server
+    healthcheck:
+      test: ["CMD-SHELL", "clickhouse-client --query 'SELECT 1'"]
+      interval: 10s
+      timeout: 5s
+      retries: 15
+      start_period: 25s
+    logging: *default-logging
+    mem_limit: 4096m
+    mem_reservation: 2048m
+    restart: unless-stopped
+
   redis:
     image: redis:7-alpine@sha256:3f2bc1b45a1df9b8817d0eb7fda2e6cea55ab3f0f77089d9c1f2f3d0114c6cb3
     command: ["redis-server", "--save", "", "--appendonly", "no"]
@@ -116,6 +139,8 @@ volumes:
   postgres_data:
   influxdb_data:
   influxdb_config:
+  clickhouse_data:
+  clickhouse_logs:
   pgadmin_data:
 
 networks:
