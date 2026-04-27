@@ -28,7 +28,7 @@ services:
   backend-api:
     <<: *go-service
     # {"$imagepolicy": "trading-terminal:backend-api:tag"}
-    image: ghcr.io/trading-terminal2025/terminal-backend-api:sha-a2cce7e49ca4634719e5e2a210b8afa6ff2bfcc6
+    image: ghcr.io/trading-terminal2025/terminal-backend-api:sha-d8bc0470a2d929eb846982c097dadff5b6edc60b
     ports:
       - "8081:8081"
     environment:
@@ -55,7 +55,7 @@ services:
   oms:
     <<: *go-service
     # {"$imagepolicy": "trading-terminal:oms:tag"}
-    image: ghcr.io/trading-terminal2025/terminal-backend-oms:sha-a2cce7e49ca4634719e5e2a210b8afa6ff2bfcc6
+    image: ghcr.io/trading-terminal2025/terminal-backend-oms:sha-d8bc0470a2d929eb846982c097dadff5b6edc60b
     environment:
       ADMIN_USERNAME: ${ADMIN_USERNAME:-admin}
       ADMIN_PASSWORD: ${ADMIN_PASSWORD:-REDACTED_CREDS}
@@ -70,7 +70,7 @@ services:
   mt5-bridge:
     <<: *go-service
     # {"$imagepolicy": "trading-terminal:mt5-bridge:tag"}
-    image: ghcr.io/trading-terminal2025/terminal-mt5-bridge:sha-a2cce7e49ca4634719e5e2a210b8afa6ff2bfcc6
+    image: ghcr.io/trading-terminal2025/terminal-mt5-bridge:sha-d8bc0470a2d929eb846982c097dadff5b6edc60b
     ports:
       - "5556:5556"
     environment:
@@ -87,7 +87,7 @@ services:
   market-data-bridge:
     <<: *go-service
     # {"$imagepolicy": "trading-terminal:market-data-bridge:tag"}
-    image: ghcr.io/trading-terminal2025/terminal-market-data-bridge:sha-a2cce7e49ca4634719e5e2a210b8afa6ff2bfcc6
+    image: ghcr.io/trading-terminal2025/terminal-market-data-bridge:sha-d8bc0470a2d929eb846982c097dadff5b6edc60b
     ports:
       - "5558:5558"
     environment:
