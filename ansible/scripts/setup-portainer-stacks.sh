@@ -15,13 +15,13 @@ fi
 PORTAINER_URL="${PORTAINER_URL:-https://127.0.0.1:9443}"
 PORTAINER_USER="${PORTAINER_USER:-admin}"
 PORTAINER_PASS="${PORTAINER_ADMIN_PASSWORD:?PORTAINER_ADMIN_PASSWORD is required}"
-SYSTEM_REPO="${SYSTEM_REPO:-https://github.com/Trading-Terminal2025/SysteM}"
+SYSTEM_REPO="${SYSTEM_REPO:-https://github.com/trading-platform/SysteM}"
 SYSTEM_REF="${SYSTEM_REF:-refs/heads/new-infra}"
 SYSTEM_REPO_TOKEN="${SYSTEM_REPO_TOKEN:?SYSTEM_REPO_TOKEN is required}"
 # Use dedicated GITHUB_TOKEN if provided, otherwise reuse SYSTEM_REPO_TOKEN for Portainer Git auth.
 GITHUB_TOKEN="${GITHUB_TOKEN:-${SYSTEM_REPO_TOKEN}}"
 
-ORG="${ORG:-Trading-Terminal2025}"
+ORG="${ORG:-trading-platform}"
 TARGET_REPOS="${TARGET_REPOS:-stable-backend- UI-Terminal- terminal-dashboard}"
 CLEAN_LEGACY_SECRETS="${CLEAN_LEGACY_SECRETS:-false}"
 
