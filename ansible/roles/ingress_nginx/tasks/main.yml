@@ -1,0 +1,22 @@
+---
+- name: Install ingress-nginx via Helm
+  shell: |
+    helm upgrade --install ingress-nginx ingress-nginx/ingress-nginx \
+      --namespace ingress-nginx \
+      --create-namespace \
+      --set controller.service.type=NodePort \
+      --set controller.service.nodePorts.http=80 \
+      --set controller.service.nodePorts.https=443 \
+      --set controller.hostPort.enabled=true \
+      --set controller.hostPort.ports.http=80 \
+      --set controller.hostPort.ports.https=443 \
+      --wait
+  environment:
+    KUBECONFIG: /etc/rancher/k3s/k3s.yaml
+
+- name: Wait for ingress-nginx to be ready
+  shell: |
+    k3s kubectl rollout status deployment/ingress-nginx-controller \
+      -n ingress-nginx --timeout=120s
+  environment:
+    KUBECONFIG: /etc/rancher/k3s/k3s.yaml

@@ -1,0 +1,12 @@
+---
+- name: Install Falco
+  shell: |
+    helm upgrade --install falco falcosecurity/falco \
+      --namespace falco \
+      --create-namespace \
+      --set driver.kind=modern_ebpf \
+      --set falcosidekick.enabled=true \
+      --set falcosidekick.config.grafana.hostport=monitoring-grafana.monitoring:80 \
+      --wait
+  environment:
+    KUBECONFIG: /etc/rancher/k3s/k3s.yaml

@@ -1,0 +1,30 @@
+# Domain
+domain: example.com
+
+# k3s version
+k3s_version: "v1.29.3+k3s1"
+
+# Helm version
+helm_version: "v3.14.4"
+
+# ArgoCD version
+argocd_version: "v2.10.4"
+
+# Namespaces
+namespaces:
+  - argocd
+  - infra
+  - staging
+  - production
+  - monitoring
+  - falco
+
+# GitHub org
+github_org: "your-github-org"
+
+# GHCR registry
+ghcr_registry: "ghcr.io/your-github-org"
+
+# GitOps repo
+gitops_repo: "https://github.com/your-github-org/SysteM.git"
+gitops_path: "gitops"

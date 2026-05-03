@@ -1,0 +1,25 @@
+---
+- name: Install kube-prometheus-stack
+  shell: |
+    helm upgrade --install monitoring prometheus/kube-prometheus-stack \
+      --namespace monitoring \
+      --create-namespace \
+      --set grafana.ingress.enabled=true \
+      --set grafana.ingress.ingressClassName=nginx \
+      --set grafana.ingress.hosts[0]=grafana.{{ domain }} \
+      --set grafana.ingress.tls[0].secretName=grafana-tls \
+      --set grafana.ingress.tls[0].hosts[0]=grafana.{{ domain }} \
+      --set grafana.ingress.annotations."cert-manager\.io/cluster-issuer"=letsencrypt-prod \
+      --set grafana.adminPassword={{ vault_grafana_admin_password }} \
+      --wait --timeout 300s
+  environment:
+    KUBECONFIG: /etc/rancher/k3s/k3s.yaml
+
+- name: Install Loki
+  shell: |
+    helm upgrade --install loki grafana/loki-stack \
+      --namespace monitoring \
+      --set promtail.enabled=true \
+      --wait
+  environment:
+    KUBECONFIG: /etc/rancher/k3s/k3s.yaml

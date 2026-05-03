@@ -1,0 +1,38 @@
+---
+- name: Check if Helm is installed
+  stat:
+    path: /usr/local/bin/helm
+  register: helm_binary
+
+- name: Download Helm install script
+  get_url:
+    url: https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+    dest: /tmp/get-helm-3.sh
+    mode: 0755
+  when: not helm_binary.stat.exists
+
+- name: Install Helm
+  shell: DESIRED_VERSION={{ helm_version }} /tmp/get-helm-3.sh
+  when: not helm_binary.stat.exists
+
+- name: Add Helm repos
+  shell: |
+    helm repo add {{ item.name }} {{ item.url }}
+  loop:
+    - { name: ingress-nginx,      url: "https://kubernetes.github.io/ingress-nginx" }
+    - { name: jetstack,           url: "https://charts.jetstack.io" }
+    - { name: sealed-secrets,     url: "https://bitnami-labs.github.io/sealed-secrets" }
+    - { name: argo,               url: "https://argoproj.github.io/argo-helm" }
+    - { name: prometheus,         url: "https://prometheus-community.github.io/helm-charts" }
+    - { name: grafana,            url: "https://grafana.github.io/helm-charts" }
+    - { name: falcosecurity,      url: "https://falcosecurity.github.io/charts" }
+    - { name: cnpg,               url: "https://cloudnative-pg.github.io/charts" }
+    - { name: bitnami,            url: "https://charts.bitnami.com/bitnami" }
+    - { name: influxdata,         url: "https://helm.influxdata.com" }
+  environment:
+    KUBECONFIG: /etc/rancher/k3s/k3s.yaml
+
+- name: Update Helm repos
+  shell: helm repo update
+  environment:
+    KUBECONFIG: /etc/rancher/k3s/k3s.yaml

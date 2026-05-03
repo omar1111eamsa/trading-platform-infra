@@ -1,0 +1,62 @@
+---
+- name: Check if k3s is already installed
+  stat:
+    path: /usr/local/bin/k3s
+  register: k3s_binary
+
+- name: Download k3s install script
+  get_url:
+    url: https://get.k3s.io
+    dest: /tmp/k3s-install.sh
+    mode: 0755
+  when: not k3s_binary.stat.exists
+
+- name: Install k3s
+  shell: |
+    INSTALL_K3S_VERSION={{ k3s_version }} \
+    INSTALL_K3S_EXEC="server \
+      --disable traefik \
+      --disable servicelb \
+      --write-kubeconfig-mode 644 \
+      --node-name app-vps" \
+    /tmp/k3s-install.sh
+  when: not k3s_binary.stat.exists
+
+- name: Wait for k3s to be ready
+  wait_for:
+    path: /var/lib/rancher/k3s/server/node-token
+    timeout: 60
+
+- name: Create .kube directory for ubuntu user
+  file:
+    path: /home/ubuntu/.kube
+    state: directory
+    owner: ubuntu
+    group: ubuntu
+    mode: 0755
+
+- name: Copy kubeconfig for ubuntu user
+  copy:
+    src: /etc/rancher/k3s/k3s.yaml
+    dest: /home/ubuntu/.kube/config
+    remote_src: yes
+    owner: ubuntu
+    group: ubuntu
+    mode: 0600
+
+- name: Set KUBECONFIG in ubuntu bashrc
+  lineinfile:
+    path: /home/ubuntu/.bashrc
+    line: 'export KUBECONFIG=/home/ubuntu/.kube/config'
+    state: present
+
+- name: Wait for k3s node to be Ready
+  shell: k3s kubectl get nodes | grep -w Ready
+  register: node_ready
+  retries: 20
+  delay: 10
+  until: node_ready.rc == 0
+
+- name: Create namespaces
+  shell: k3s kubectl create namespace {{ item }} --dry-run=client -o yaml | k3s kubectl apply -f -
+  loop: "{{ namespaces }}"

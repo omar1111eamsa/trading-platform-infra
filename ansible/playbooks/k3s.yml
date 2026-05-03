@@ -1,0 +1,7 @@
+---
+- name: Install k3s only
+  hosts: k3s
+  become: true
+  roles:
+    - common
+    - k3s

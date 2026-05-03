@@ -1,0 +1,66 @@
+---
+- name: Install cert-manager CRDs
+  shell: |
+    k3s kubectl apply -f \
+    https://github.com/cert-manager/cert-manager/releases/download/v1.14.4/cert-manager.crds.yaml
+  environment:
+    KUBECONFIG: /etc/rancher/k3s/k3s.yaml
+
+- name: Install cert-manager via Helm
+  shell: |
+    helm upgrade --install cert-manager jetstack/cert-manager \
+      --namespace cert-manager \
+      --create-namespace \
+      --version v1.14.4 \
+      --wait
+  environment:
+    KUBECONFIG: /etc/rancher/k3s/k3s.yaml
+
+- name: Wait for cert-manager to be ready
+  shell: |
+    k3s kubectl rollout status deployment/cert-manager \
+      -n cert-manager --timeout=120s
+  environment:
+    KUBECONFIG: /etc/rancher/k3s/k3s.yaml
+
+- name: Apply ClusterIssuer for Let's Encrypt
+  shell: k3s kubectl apply -f -
+  args:
+    stdin: |
+      apiVersion: cert-manager.io/v1
+      kind: ClusterIssuer
+      metadata:
+        name: letsencrypt-prod
+      spec:
+        acme:
+          server: https://acme-v02.api.letsencrypt.org/directory
+          email: admin@{{ domain }}
+          privateKeySecretRef:
+            name: letsencrypt-prod
+          solvers:
+            - http01:
+                ingress:
+                  class: nginx
+  environment:
+    KUBECONFIG: /etc/rancher/k3s/k3s.yaml
+
+- name: Apply ClusterIssuer for Let's Encrypt staging
+  shell: k3s kubectl apply -f -
+  args:
+    stdin: |
+      apiVersion: cert-manager.io/v1
+      kind: ClusterIssuer
+      metadata:
+        name: letsencrypt-staging
+      spec:
+        acme:
+          server: https://acme-staging-v02.api.letsencrypt.org/directory
+          email: admin@{{ domain }}
+          privateKeySecretRef:
+            name: letsencrypt-staging
+          solvers:
+            - http01:
+                ingress:
+                  class: nginx
+  environment:
+    KUBECONFIG: /etc/rancher/k3s/k3s.yaml

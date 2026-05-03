@@ -1,0 +1,82 @@
+---
+- name: Update apt cache
+  apt:
+    update_cache: yes
+    cache_valid_time: 3600
+
+- name: Install required packages
+  apt:
+    name:
+      - curl
+      - wget
+      - git
+      - vim
+      - htop
+      - ufw
+      - fail2ban
+      - apt-transport-https
+      - ca-certificates
+      - gnupg
+      - lsb-release
+      - open-iscsi
+      - nfs-common
+    state: present
+
+- name: Set timezone to UTC
+  timezone:
+    name: UTC
+
+- name: Configure UFW defaults
+  ufw:
+    direction: "{{ item.direction }}"
+    policy: "{{ item.policy }}"
+  loop:
+    - { direction: incoming, policy: deny }
+    - { direction: outgoing, policy: allow }
+
+- name: Allow required ports
+  ufw:
+    rule: allow
+    port: "{{ item.port }}"
+    proto: "{{ item.proto }}"
+  loop:
+    - { port: "22",    proto: tcp }
+    - { port: "80",    proto: tcp }
+    - { port: "443",   proto: tcp }
+    - { port: "6443",  proto: tcp }
+    - { port: "5556",  proto: tcp }
+    - { port: "10250", proto: tcp }
+
+- name: Enable UFW
+  ufw:
+    state: enabled
+
+- name: Enable and start fail2ban
+  systemd:
+    name: fail2ban
+    enabled: yes
+    state: started
+
+- name: Set kernel parameters for k3s
+  sysctl:
+    name: "{{ item.name }}"
+    value: "{{ item.value }}"
+    state: present
+    reload: yes
+  loop:
+    - { name: net.ipv4.ip_forward,                  value: "1" }
+    - { name: net.bridge.bridge-nf-call-iptables,   value: "1" }
+    - { name: net.bridge.bridge-nf-call-ip6tables,  value: "1" }
+    - { name: vm.overcommit_memory,                 value: "1" }
+    - { name: kernel.panic,                         value: "10" }
+    - { name: kernel.panic_on_oops,                 value: "1" }
+
+- name: Disable swap
+  command: swapoff -a
+  when: ansible_swaptotal_mb > 0
+
+- name: Remove swap from fstab
+  lineinfile:
+    path: /etc/fstab
+    regexp: '^.*swap.*$'
+    state: absent

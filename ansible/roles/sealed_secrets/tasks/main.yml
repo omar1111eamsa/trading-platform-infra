@@ -1,0 +1,23 @@
+---
+- name: Install Sealed Secrets via Helm
+  shell: |
+    helm upgrade --install sealed-secrets sealed-secrets/sealed-secrets \
+      --namespace kube-system \
+      --wait
+  environment:
+    KUBECONFIG: /etc/rancher/k3s/k3s.yaml
+
+- name: Wait for Sealed Secrets to be ready
+  shell: |
+    k3s kubectl rollout status deployment/sealed-secrets-controller \
+      -n kube-system --timeout=120s
+  environment:
+    KUBECONFIG: /etc/rancher/k3s/k3s.yaml
+
+- name: Install kubeseal CLI
+  shell: |
+    wget https://github.com/bitnami-labs/sealed-secrets/releases/download/v0.26.2/kubeseal-0.26.2-linux-amd64.tar.gz \
+      -O /tmp/kubeseal.tar.gz
+    tar -xzf /tmp/kubeseal.tar.gz -C /tmp
+    mv /tmp/kubeseal /usr/local/bin/kubeseal
+    chmod +x /usr/local/bin/kubeseal

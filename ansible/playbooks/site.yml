@@ -1,0 +1,54 @@
+---
+- name: Bootstrap VPS
+  hosts: k3s
+  become: true
+  roles:
+    - common
+
+- name: Install k3s
+  hosts: k3s
+  become: true
+  roles:
+    - k3s
+
+- name: Install Helm
+  hosts: k3s
+  become: true
+  roles:
+    - helm
+
+- name: Install ingress-nginx
+  hosts: k3s
+  become: true
+  roles:
+    - ingress_nginx
+
+- name: Install cert-manager
+  hosts: k3s
+  become: true
+  roles:
+    - cert_manager
+
+- name: Install Sealed Secrets
+  hosts: k3s
+  become: true
+  roles:
+    - sealed_secrets
+
+- name: Install ArgoCD
+  hosts: k3s
+  become: true
+  roles:
+    - argocd
+
+- name: Install Monitoring
+  hosts: k3s
+  become: true
+  roles:
+    - monitoring
+
+- name: Install Falco
+  hosts: k3s
+  become: true
+  roles:
+    - falco
