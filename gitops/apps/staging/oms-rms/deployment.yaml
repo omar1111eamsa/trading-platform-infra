@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: oms-rms
+  namespace: staging
+  labels:
+    app: oms-rms
+    env: staging
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: oms-rms
+  template:
+    metadata:
+      labels:
+        app: oms-rms
+        env: staging
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+      containers:
+        - name: oms-rms
+          image: ghcr.io/your-github-org/oms-rms:latest
+          imagePullPolicy: Always
+          envFrom:
+            - secretRef:
+                name: oms-rms-secrets
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "256Mi"
+              cpu: "250m"
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+      imagePullSecrets:
+        - name: ghcr-credentials

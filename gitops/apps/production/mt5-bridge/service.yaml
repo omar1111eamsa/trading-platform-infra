@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mt5-bridge
+  namespace: staging
+spec:
+  selector:
+    app: mt5-bridge
+  ports:
+    - name: mt5-tcp
+      port: 5556
+      targetPort: 5556
+  type: NodePort

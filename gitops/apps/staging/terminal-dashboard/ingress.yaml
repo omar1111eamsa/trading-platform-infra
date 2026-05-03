@@ -1,0 +1,24 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: terminal-dashboard
+  namespace: staging
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - staging-dashboard.example.com
+      secretName: staging-dashboard-tls
+  rules:
+    - host: staging-dashboard.example.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: terminal-dashboard
+                port:
+                  number: 80

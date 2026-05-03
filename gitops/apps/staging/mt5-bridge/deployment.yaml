@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mt5-bridge
+  namespace: staging
+  labels:
+    app: mt5-bridge
+    env: staging
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mt5-bridge
+  template:
+    metadata:
+      labels:
+        app: mt5-bridge
+        env: staging
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+      containers:
+        - name: mt5-bridge
+          image: ghcr.io/your-github-org/mt5-bridge:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 5556
+          envFrom:
+            - secretRef:
+                name: mt5-bridge-secrets
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "256Mi"
+              cpu: "250m"
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+      imagePullSecrets:
+        - name: ghcr-credentials

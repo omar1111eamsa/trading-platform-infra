@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: terminal-dashboard
+  namespace: staging
+  labels:
+    app: terminal-dashboard
+    env: staging
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: terminal-dashboard
+  template:
+    metadata:
+      labels:
+        app: terminal-dashboard
+        env: staging
+    spec:
+      containers:
+        - name: terminal-dashboard
+          image: ghcr.io/your-github-org/terminal-dashboard:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "50m"
+            limits:
+              memory: "256Mi"
+              cpu: "200m"
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 10
+            periodSeconds: 20
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 10
+      imagePullSecrets:
+        - name: ghcr-credentials

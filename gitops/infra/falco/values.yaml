@@ -1,0 +1,20 @@
+driver:
+  kind: modern_ebpf
+
+falcosidekick:
+  enabled: true
+  config:
+    grafana:
+      hostport: monitoring-grafana.monitoring:80
+      dashboardid: 11914
+    slack:
+      webhookurl: "" # injected via sealed secret
+      minimumpriority: warning
+
+resources:
+  requests:
+    memory: "256Mi"
+    cpu: "100m"
+  limits:
+    memory: "512Mi"
+    cpu: "500m"

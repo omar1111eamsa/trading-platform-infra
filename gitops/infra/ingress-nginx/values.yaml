@@ -1,0 +1,33 @@
+controller:
+  hostPort:
+    enabled: true
+    ports:
+      http: 80
+      https: 443
+
+  service:
+    type: NodePort
+    nodePorts:
+      http: 80
+      https: 443
+
+  config:
+    use-real-ip: "true"
+    proxy-real-ip-cidr: "0.0.0.0/0"
+    proxy-body-size: "50m"
+    proxy-read-timeout: "3600"
+    proxy-send-timeout: "3600"
+    enable-real-ip: "true"
+
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "100m"
+    limits:
+      memory: "512Mi"
+      cpu: "500m"
+
+  metrics:
+    enabled: true
+    serviceMonitor:
+      enabled: true

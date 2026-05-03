@@ -1,0 +1,36 @@
+replicaCount: 1
+
+auth:
+  username: app
+  existingPasswordSecret: rabbitmq-credentials
+  existingSecretPasswordKey: rabbitmq-password
+
+persistence:
+  enabled: true
+  size: 10Gi
+
+resources:
+  requests:
+    memory: "512Mi"
+    cpu: "250m"
+  limits:
+    memory: "1Gi"
+    cpu: "500m"
+
+metrics:
+  enabled: true
+  serviceMonitor:
+    enabled: true
+
+extraConfiguration: |
+  default_vhost = /
+  log.console.level = info
+  channel_max = 2047
+
+loadDefinition:
+  enabled: true
+  existingSecret: rabbitmq-load-definition
+
+extraEnvVars:
+  - name: RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS
+    value: "-rabbit consumer_timeout 36000000"

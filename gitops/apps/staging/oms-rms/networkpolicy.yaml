@@ -1,0 +1,33 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: oms-rms
+  namespace: staging
+spec:
+  podSelector:
+    matchLabels:
+      app: oms-rms
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: backend-api
+  egress:
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: infra
+      ports:
+        - port: 5672
+    - to:
+        - podSelector:
+            matchLabels:
+              app: backend-api
+      ports:
+        - port: 8081
+    - ports:
+        - port: 53
+          protocol: UDP

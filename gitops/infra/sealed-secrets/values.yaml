@@ -1,0 +1,11 @@
+resources:
+  requests:
+    memory: "64Mi"
+    cpu: "50m"
+  limits:
+    memory: "128Mi"
+    cpu: "100m"
+
+metrics:
+  serviceMonitor:
+    enabled: true

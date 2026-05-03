@@ -1,0 +1,41 @@
+grafana:
+  adminPassword: "" # injected via sealed secret
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    hosts:
+      - grafana.example.com
+    tls:
+      - secretName: grafana-tls
+        hosts:
+          - grafana.example.com
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt-prod
+
+  persistence:
+    enabled: true
+    size: 5Gi
+
+  additionalDataSources:
+    - name: Loki
+      type: loki
+      url: http://loki:3100
+
+prometheus:
+  prometheusSpec:
+    retention: 30d
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          resources:
+            requests:
+              storage: 20Gi
+
+alertmanager:
+  alertmanagerSpec:
+    storage:
+      volumeClaimTemplate:
+        spec:
+          resources:
+            requests:
+              storage: 5Gi
