@@ -1,14 +1,14 @@
-output "vps_ip" {
-  description = "Public IP of the VPS"
-  value       = ovh_cloud_project_instance.app_vps.ip_address
-}
-
-output "vps_name" {
-  description = "Name of the VPS"
-  value       = ovh_cloud_project_instance.app_vps.name
-}
-
-output "ssh_command" {
-  description = "SSH command to connect to VPS"
-  value       = "ssh ubuntu@${ovh_cloud_project_instance.app_vps.ip_address}"
+output "dns_records" {
+  description = "All DNS records created"
+  value = {
+    root             = "${var.domain} -> ${var.vps_ip}"
+    api              = "api.${var.domain} -> ${var.vps_ip}"
+    terminal         = "terminal.${var.domain} -> ${var.vps_ip}"
+    dashboard        = "dashboard.${var.domain} -> ${var.vps_ip}"
+    staging_api      = "staging-api.${var.domain} -> ${var.vps_ip}"
+    staging_terminal = "staging-terminal.${var.domain} -> ${var.vps_ip}"
+    staging_dashboard= "staging-dashboard.${var.domain} -> ${var.vps_ip}"
+    argocd           = "argocd.${var.domain} -> ${var.vps_ip}"
+    grafana          = "grafana.${var.domain} -> ${var.vps_ip}"
+  }
 }

@@ -1,4 +1,3 @@
-# OVH API credentials
 variable "ovh_endpoint" {
   description = "OVH API endpoint"
   type        = string
@@ -23,44 +22,20 @@ variable "ovh_consumer_key" {
   sensitive   = true
 }
 
-variable "ovh_service_name" {
-  description = "OVH public cloud project ID"
+variable "vps_ip" {
+  description = "Existing VPS public IP"
   type        = string
+  default     = "REDACTED_VPS_IP"
 }
 
-# VPS config
-variable "region" {
-  description = "OVH region"
-  type        = string
-  default     = "GRA11"
-}
-
-variable "vps_name" {
-  description = "Name of the VPS instance"
-  type        = string
-  default     = "platform-vps"
-}
-
-variable "vps_flavor" {
-  description = "OVH instance flavor"
-  type        = string
-  default     = "b3-8"
-}
-
-variable "vps_image" {
-  description = "OS image"
-  type        = string
-  default     = "Ubuntu 22.04"
-}
-
-variable "ssh_public_key" {
-  description = "SSH public key for VPS access"
-  type        = string
-}
-
-# Domain
 variable "domain" {
   description = "Root domain"
   type        = string
   default     = "example.com"
+}
+
+variable "dns_ttl" {
+  description = "DNS record TTL in seconds"
+  type        = number
+  default     = 300
 }

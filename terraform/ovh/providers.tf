@@ -6,17 +6,13 @@ terraform {
       source  = "ovh/ovh"
       version = "~> 0.40"
     }
-    local = {
-      source  = "hashicorp/local"
-      version = "~> 2.4"
-    }
   }
 
   backend "s3" {
     bucket                      = "terraform-state"
     key                         = "ovh/terraform.tfstate"
     region                      = "ovh"
-    endpoint                    = "s3.gra.io.cloud.ovh.net"
+    endpoint                    = "s3.de2.io.cloud.ovh.net"
     skip_credentials_validation = true
     skip_requesting_account_id  = true
     skip_metadata_api_check     = true
