@@ -1,0 +1,17 @@
+# Terraform
+**/.terraform/
+*.tfstate
+*.tfstate.backup
+*.tfvars
+.terraform.lock.hcl
+
+# Ansible
+*.retry
+ansible/inventories/ovh/group_vars/secrets.local.yml
+
+# Sealed Secrets private key
+*.key
+
+# OS
+.DS_Store
+*.swp
