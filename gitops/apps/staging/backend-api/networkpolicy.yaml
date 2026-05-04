@@ -15,6 +15,14 @@ spec:
         - namespaceSelector:
             matchLabels:
               kubernetes.io/metadata.name: ingress-nginx
+    - from:
+        - podSelector:
+            matchLabels:
+              app: oms-rms
+    - from:
+        - podSelector:
+            matchLabels:
+              app: ui-terminal
   egress:
     - to:
         - namespaceSelector:
@@ -23,7 +31,7 @@ spec:
       ports:
         - port: 5432
         - port: 5672
-        - port: 8086
+        - port: 9000
     - to:
         - podSelector:
             matchLabels:
