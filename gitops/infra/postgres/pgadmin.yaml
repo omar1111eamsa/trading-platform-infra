@@ -1,0 +1,81 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pgadmin
+  namespace: infra
+  labels:
+    app: pgadmin
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pgadmin
+  template:
+    metadata:
+      labels:
+        app: pgadmin
+    spec:
+      containers:
+        - name: pgadmin
+          image: dpage/pgadmin4:8
+          ports:
+            - containerPort: 80
+          env:
+            - name: PGADMIN_DEFAULT_EMAIL
+              value: admin@example.com
+            - name: PGADMIN_DEFAULT_PASSWORD
+              value: Admin123456789@
+            - name: PGADMIN_CONFIG_SERVER_MODE
+              value: "True"
+            - name: PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED
+              value: "False"
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "50m"
+            limits:
+              memory: "256Mi"
+              cpu: "200m"
+          volumeMounts:
+            - name: pgadmin-data
+              mountPath: /var/lib/pgadmin
+      volumes:
+        - name: pgadmin-data
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pgadmin
+  namespace: infra
+spec:
+  selector:
+    app: pgadmin
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: pgadmin
+  namespace: infra
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-body-size: "16m"
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: pgadmin.example.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: pgadmin
+                port:
+                  number: 80
