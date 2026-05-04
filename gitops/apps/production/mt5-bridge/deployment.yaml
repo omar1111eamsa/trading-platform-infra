@@ -2,10 +2,10 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: mt5-bridge
-  namespace: staging
+  namespace: production
   labels:
     app: mt5-bridge
-    env: staging
+    env: production
 spec:
   replicas: 1
   selector:
@@ -15,7 +15,7 @@ spec:
     metadata:
       labels:
         app: mt5-bridge
-        env: staging
+        env: production
     spec:
       securityContext:
         runAsNonRoot: true

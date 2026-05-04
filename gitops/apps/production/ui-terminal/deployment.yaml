@@ -2,10 +2,10 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: ui-terminal
-  namespace: staging
+  namespace: production
   labels:
     app: ui-terminal
-    env: staging
+    env: production
 spec:
   replicas: 1
   selector:
@@ -15,7 +15,7 @@ spec:
     metadata:
       labels:
         app: ui-terminal
-        env: staging
+        env: production
     spec:
       containers:
         - name: ui-terminal

@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: ui-terminal
-  namespace: staging
+  namespace: production
 spec:
   selector:
     app: ui-terminal
