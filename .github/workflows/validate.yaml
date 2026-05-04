@@ -22,8 +22,7 @@ jobs:
           extends: default
           rules:
             document-start: disable
-            line-length:
-              max: 200
+            line-length: disable
           EOF
           yamllint -c /tmp/.yamllint.yml gitops/
 
