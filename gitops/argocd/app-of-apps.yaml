@@ -1,22 +1,44 @@
 apiVersion: argoproj.io/v1alpha1
-kind: Application
+kind: ApplicationSet
 metadata:
   name: infra
   namespace: argocd
-  finalizers:
-    - resources-finalizer.argocd.argoproj.io
 spec:
-  project: default
-  source:
-    repoURL: https://github.com/your-github-org/SysteM.git
-    targetRevision: main
-    path: gitops/infra
-  destination:
-    server: https://kubernetes.default.svc
-    namespace: infra
-  syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
-    syncOptions:
-      - CreateNamespace=true
+  generators:
+    - list:
+        elements:
+          - name: ingress-nginx
+            path: gitops/infra/ingress-nginx
+          - name: cert-manager
+            path: gitops/infra/cert-manager
+          - name: sealed-secrets
+            path: gitops/infra/sealed-secrets
+          - name: monitoring
+            path: gitops/infra/monitoring
+          - name: falco
+            path: gitops/infra/falco
+          - name: postgres
+            path: gitops/infra/postgres
+          - name: rabbitmq
+            path: gitops/infra/rabbitmq
+          - name: clickhouse
+            path: gitops/infra/clickhouse
+  template:
+    metadata:
+      name: 'infra-{{name}}'
+      namespace: argocd
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/your-github-org/SysteM.git
+        targetRevision: main
+        path: '{{path}}'
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: infra
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true

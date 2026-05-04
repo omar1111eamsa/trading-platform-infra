@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: clickhouse-init
+  namespace: infra
+data:
+  init.sql: |
+    CREATE DATABASE IF NOT EXISTS app;
+
+    CREATE TABLE IF NOT EXISTS market.candles (
+      broker_id   LowCardinality(String),
+      symbol      LowCardinality(String),
+      timeframe   LowCardinality(String),
+      ts          DateTime64(3, 'UTC'),
+      open        Float64,
+      high        Float64,
+      low         Float64,
+      close       Float64,
+      volume      Float64,
+      source      LowCardinality(String) DEFAULT '',
+      inserted_at DateTime DEFAULT now()
+    )
+    ENGINE = ReplacingMergeTree(inserted_at)
+    PARTITION BY toYYYYMM(ts)
+    ORDER BY (broker_id, symbol, timeframe, ts)
+    SETTINGS index_granularity = 8192;
