@@ -10,7 +10,7 @@
       --set grafana.ingress.tls[0].secretName=grafana-tls \
       --set grafana.ingress.tls[0].hosts[0]=grafana.{{ domain }} \
       --set grafana.ingress.annotations."cert-manager\.io/cluster-issuer"=letsencrypt-prod \
-      --set grafana.adminPassword={{ vault_grafana_admin_password }} \
+      --set grafana.adminPassword={{ grafana_admin_password }} \
       --wait --timeout 300s
   environment:
     KUBECONFIG: /etc/rancher/k3s/k3s.yaml

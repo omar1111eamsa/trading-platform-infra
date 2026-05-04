@@ -8,6 +8,8 @@
 # Ansible
 *.retry
 ansible/inventories/ovh/group_vars/secrets.local.yml
+ansible/.vault_pass
+ansible/ansible_error.log
 
 # Sealed Secrets private key
 *.key

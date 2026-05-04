@@ -57,6 +57,17 @@
     enabled: yes
     state: started
 
+- name: Load br_netfilter kernel module
+  modprobe:
+    name: br_netfilter
+    state: present
+
+- name: Add br_netfilter to modules-load
+  lineinfile:
+    path: /etc/modules-load.d/k8s.conf
+    line: br_netfilter
+    create: yes
+
 - name: Set kernel parameters for k3s
   sysctl:
     name: "{{ item.name }}"

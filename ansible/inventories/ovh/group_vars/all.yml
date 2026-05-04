@@ -28,3 +28,8 @@ ghcr_registry: "ghcr.io/trading-platform"
 # GitOps repo
 gitops_repo: "https://github.com/trading-platform/SysteM.git"
 gitops_path: "gitops"
+
+# Secret aliases (values come from encrypted secrets.yml)
+grafana_admin_password: "{{ vault_grafana_admin_password }}"
+argocd_admin_password: "{{ vault_argocd_admin_password }}"
+github_token: "{{ vault_github_token }}"

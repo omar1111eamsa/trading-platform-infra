@@ -9,7 +9,7 @@
 
 - name: Wait for Sealed Secrets to be ready
   shell: |
-    k3s kubectl rollout status deployment/sealed-secrets-controller \
+    k3s kubectl rollout status deployment/sealed-secrets \
       -n kube-system --timeout=120s
   environment:
     KUBECONFIG: /etc/rancher/k3s/k3s.yaml

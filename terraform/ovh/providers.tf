@@ -8,16 +8,16 @@ terraform {
     }
   }
 
-  backend "s3" {
-    bucket                      = "terraform-state"
-    key                         = "ovh/terraform.tfstate"
-    region                      = "ovh"
-    endpoint                    = "s3.de2.io.cloud.ovh.net"
-    skip_credentials_validation = true
-    skip_requesting_account_id  = true
-    skip_metadata_api_check     = true
-    force_path_style            = true
-  }
+#   backend "s3" {
+#     bucket                      = "terraform-state"
+#     key                         = "ovh/terraform.tfstate"
+#     region                      = "ovh"
+#     endpoint                    = "s3.de2.io.cloud.ovh.net"
+#     skip_credentials_validation = true
+#     skip_requesting_account_id  = true
+#     skip_metadata_api_check     = true
+#     force_path_style            = true
+#   }
 }
 
 provider "ovh" {
