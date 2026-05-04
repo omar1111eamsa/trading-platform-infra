@@ -30,7 +30,7 @@ spec:
     spec:
       project: default
       source:
-        repoURL: https://github.com/your-github-org/SysteM.git
+        repoURL: https://github.com/trading-platform/SysteM.git
         targetRevision: main
         path: '{{path}}'
       destination:

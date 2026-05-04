@@ -20,11 +20,11 @@ namespaces:
   - falco
 
 # GitHub org
-github_org: "your-github-org"
+github_org: "trading-platform"
 
 # GHCR registry
-ghcr_registry: "ghcr.io/your-github-org"
+ghcr_registry: "ghcr.io/trading-platform"
 
 # GitOps repo
-gitops_repo: "https://github.com/your-github-org/SysteM.git"
+gitops_repo: "https://github.com/trading-platform/SysteM.git"
 gitops_path: "gitops"

@@ -24,7 +24,7 @@ PREVIOUS_SHA=abc1234
 
 # Force image update directly
 kubectl set image deployment/backend-api \
-  backend-api=ghcr.io/your-org/backend-api:$PREVIOUS_SHA \
+  backend-api=ghcr.io/trading-platform/backend-api:$PREVIOUS_SHA \
   -n production
 
 # Monitor rollout

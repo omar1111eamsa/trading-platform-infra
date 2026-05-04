@@ -60,7 +60,7 @@ kubectl -n argocd get secret argocd-initial-admin-secret \
 
 # Add SysteM repo in ArgoCD UI
 # Settings → Repositories → Connect Repo
-# URL: https://github.com/your-org/SysteM
+# URL: https://github.com/trading-platform/SysteM
 # Use GITOPS_TOKEN for auth
 ```
 

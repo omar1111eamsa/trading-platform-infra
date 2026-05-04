@@ -46,12 +46,12 @@ Health checks fail → rollout stopped, old pods kept
 
 All images are tagged with the git SHA:
 ```
-ghcr.io/your-org/backend-api:abc1234
-ghcr.io/your-org/oms-rms:abc1234
-ghcr.io/your-org/mt5-bridge:abc1234
-ghcr.io/your-org/market-data-bridge:abc1234
-ghcr.io/your-org/ui-terminal:abc1234
-ghcr.io/your-org/terminal-dashboard:abc1234
+ghcr.io/trading-platform/backend-api:abc1234
+ghcr.io/trading-platform/oms-rms:abc1234
+ghcr.io/trading-platform/mt5-bridge:abc1234
+ghcr.io/trading-platform/market-data-bridge:abc1234
+ghcr.io/trading-platform/ui-terminal:abc1234
+ghcr.io/trading-platform/terminal-dashboard:abc1234
 ```
 
 ## Rollback Procedure
