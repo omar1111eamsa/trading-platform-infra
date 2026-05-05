@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
         - name: ui-terminal
-          image: ghcr.io/trading-platform/ui-terminal:a62c67ae1ca4c62ed721f71494466bf1c4e9b3e4
+          image: ghcr.io/trading-platform/ui-terminal:ee4cc8370687dbc0f749ee876bbe07ba21d9452d
           imagePullPolicy: Always
           ports:
             - containerPort: 3000
