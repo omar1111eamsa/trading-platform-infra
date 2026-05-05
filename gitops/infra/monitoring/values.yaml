@@ -1,5 +1,8 @@
 grafana:
-  adminPassword: "" # injected via sealed secret
+  admin:
+    existingSecret: grafana-auth
+    userKey: admin-user
+    passwordKey: admin-password
   ingress:
     enabled: true
     ingressClassName: nginx
