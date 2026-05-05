@@ -7,7 +7,7 @@ metadata:
     app: ui-terminal
     env: production
 spec:
-  replicas: 1
+  replicas: 0
   selector:
     matchLabels:
       app: ui-terminal

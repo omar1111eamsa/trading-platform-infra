@@ -7,7 +7,7 @@ metadata:
     app: mt5-bridge
     env: production
 spec:
-  replicas: 1
+  replicas: 0
   selector:
     matchLabels:
       app: mt5-bridge
