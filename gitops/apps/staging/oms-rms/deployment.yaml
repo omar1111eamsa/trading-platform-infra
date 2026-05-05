@@ -22,7 +22,7 @@ spec:
         runAsUser: 1000
       containers:
         - name: oms-rms
-          image: ghcr.io/trading-platform/oms-rms:507f02466c9a74e42a9295676ab905ab8076d66f
+          image: ghcr.io/trading-platform/oms-rms:3eb3d1df56468beb633570fa925cb23176f7e19e
           imagePullPolicy: Always
           envFrom:
             - secretRef:
