@@ -39,7 +39,7 @@ jobs:
 
       - name: Validate Kubernetes manifests
         run: |
-          find gitops/ -name "*.yaml" ! -name "values.yaml" ! -name "sealedsecret.yaml" | xargs kubeconform \
+          find gitops/ -name "*.yaml" ! -name "values.yaml" ! -name "sealedsecret.yaml" ! -name "Chart.yaml" | xargs kubeconform \
             -strict \
             -ignore-missing-schemas \
             -schema-location default \
