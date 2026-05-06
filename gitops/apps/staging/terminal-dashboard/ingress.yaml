@@ -9,10 +9,10 @@ spec:
   ingressClassName: nginx
   tls:
     - hosts:
-        - staging-dashboard.example.com
-      secretName: staging-dashboard-tls
+        - dashboard.example.com
+      secretName: dashboard-tls
   rules:
-    - host: staging-dashboard.example.com
+    - host: dashboard.example.com
       http:
         paths:
           - path: /

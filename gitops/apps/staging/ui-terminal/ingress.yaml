@@ -11,10 +11,10 @@ spec:
   ingressClassName: nginx
   tls:
     - hosts:
-        - staging-terminal.example.com
-      secretName: staging-terminal-tls
+        - terminal.example.com
+      secretName: terminal-tls
   rules:
-    - host: staging-terminal.example.com
+    - host: terminal.example.com
       http:
         paths:
           - path: /

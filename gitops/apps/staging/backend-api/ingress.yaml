@@ -14,10 +14,10 @@ spec:
   ingressClassName: nginx
   tls:
     - hosts:
-        - staging-api.example.com
-      secretName: staging-api-tls
+        - api.example.com
+      secretName: api-tls
   rules:
-    - host: staging-api.example.com
+    - host: api.example.com
       http:
         paths:
           - path: /
