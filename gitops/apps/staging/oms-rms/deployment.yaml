@@ -26,7 +26,7 @@ spec:
           imagePullPolicy: Always
           env:
             - name: RABBITMQ_MANAGEMENT_URL
-              value: "http://rabbitmq.infra.svc.cluster.local:15672"
+              value: ""
           envFrom:
             - secretRef:
                 name: oms-rms-secrets
