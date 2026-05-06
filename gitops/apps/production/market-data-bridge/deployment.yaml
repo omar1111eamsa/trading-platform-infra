@@ -8,6 +8,8 @@ metadata:
     env: production
 spec:
   replicas: 0
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app: market-data-bridge
@@ -29,7 +31,7 @@ spec:
               hostPort: 5558
           envFrom:
             - secretRef:
-                name: market-data-bridge-secrets
+                name: backend-api-secrets
           resources:
             requests:
               memory: "128Mi"

@@ -8,6 +8,8 @@ metadata:
     env: production
 spec:
   replicas: 0
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app: mt5-bridge
