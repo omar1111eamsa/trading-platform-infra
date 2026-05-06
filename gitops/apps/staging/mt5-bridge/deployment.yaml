@@ -26,6 +26,7 @@ spec:
           imagePullPolicy: Always
           ports:
             - containerPort: 5556
+              hostPort: 5556
           envFrom:
             - secretRef:
                 name: mt5-bridge-secrets

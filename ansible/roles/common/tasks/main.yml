@@ -45,6 +45,7 @@
     - { port: "443",   proto: tcp }
     - { port: "6443",  proto: tcp }
     - { port: "5556",  proto: tcp }
+    - { port: "5558",  proto: tcp }
     - { port: "10250", proto: tcp }
 
 - name: Enable UFW

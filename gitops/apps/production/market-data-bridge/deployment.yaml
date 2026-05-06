@@ -1,35 +1,35 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: mt5-bridge
+  name: market-data-bridge
   namespace: production
   labels:
-    app: mt5-bridge
+    app: market-data-bridge
     env: production
 spec:
   replicas: 0
   selector:
     matchLabels:
-      app: mt5-bridge
+      app: market-data-bridge
   template:
     metadata:
       labels:
-        app: mt5-bridge
+        app: market-data-bridge
         env: production
     spec:
       securityContext:
         runAsNonRoot: true
         runAsUser: 1000
       containers:
-        - name: mt5-bridge
-          image: ghcr.io/trading-platform/mt5-bridge:latest
+        - name: market-data-bridge
+          image: ghcr.io/trading-platform/market-data-bridge:latest
           imagePullPolicy: Always
           ports:
-            - containerPort: 5556
-              hostPort: 5556
+            - containerPort: 5558
+              hostPort: 5558
           envFrom:
             - secretRef:
-                name: mt5-bridge-secrets
+                name: market-data-bridge-secrets
           resources:
             requests:
               memory: "128Mi"
