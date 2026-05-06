@@ -4,7 +4,7 @@
 
 ```bash
 # Find the last working commit in gitops
-git log --oneline gitops/apps/production/backend-api/deployment.yaml
+git log --oneline gitops/apps/staging/backend-api/deployment.yaml
 
 # Revert to previous image tag
 git revert <commit-sha>
@@ -25,10 +25,10 @@ PREVIOUS_SHA=abc1234
 # Force image update directly
 kubectl set image deployment/backend-api \
   backend-api=ghcr.io/trading-platform/backend-api:$PREVIOUS_SHA \
-  -n production
+  -n staging
 
 # Monitor rollout
-kubectl rollout status deployment/backend-api -n production
+kubectl rollout status deployment/backend-api -n staging
 
 # IMPORTANT: after emergency rollback, immediately update git
 # to match what is running, otherwise ArgoCD will revert it

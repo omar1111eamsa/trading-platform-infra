@@ -32,8 +32,7 @@ Health checks fail → rollout stopped, old pods kept
 
 | Branch | Deploys to | Auto-sync |
 |---|---|---|
-| `staging` | staging namespace | yes |
-| `main` | production namespace | no (PR required) |
+| `staging` | staging namespace (production domains) | yes |
 
 ## Required GitHub Secrets
 
@@ -59,7 +58,7 @@ ghcr.io/trading-platform/terminal-dashboard:abc1234
 ```bash
 # Find previous working SHA in git log
 cd SysteM
-git log --oneline gitops/apps/production/backend-api/deployment.yaml
+git log --oneline gitops/apps/staging/backend-api/deployment.yaml
 
 # Revert the image tag commit
 git revert <commit-sha>

@@ -109,5 +109,4 @@ kubectl get certificates -A
 
 # Hit health endpoint
 curl https://api.example.com/health
-curl https://staging-api.example.com/health
 ```

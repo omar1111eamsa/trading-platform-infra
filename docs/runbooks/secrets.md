@@ -23,15 +23,15 @@ git push
 ```bash
 # 1. Generate new sealed secret with new value
 kubectl create secret generic backend-api-secrets \
-  --namespace production \
+  --namespace staging \
   --from-literal=JWT_SECRET=new_secret_value \
   --from-literal=... \
   --dry-run=client -o yaml | \
-kubeseal --format yaml > gitops/apps/production/backend-api/sealedsecret.yaml
+kubeseal --format yaml > gitops/apps/staging/backend-api/sealedsecret.yaml
 
 # 2. Commit and push
 git add .
-git commit -m "chore(secrets): rotate backend-api production JWT secret"
+git commit -m "chore(secrets): rotate backend-api JWT secret"
 git push
 
 # 3. ArgoCD applies, pods restart with new secret

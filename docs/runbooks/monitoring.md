@@ -31,13 +31,13 @@
 
 ```bash
 # All logs for a service
-kubectl logs -l app=backend-api -n production --tail=100
+kubectl logs -l app=backend-api -n staging --tail=100
 
 # Follow logs
-kubectl logs -l app=backend-api -n production -f
+kubectl logs -l app=backend-api -n staging -f
 
 # Loki via Grafana
-# Explore → Loki → {namespace="production", app="backend-api"}
+# Explore → Loki → {namespace="staging", app="backend-api"}
 ```
 
 ## Checking pod health
@@ -47,8 +47,8 @@ kubectl logs -l app=backend-api -n production -f
 kubectl get pods -A
 
 # Describe a failing pod
-kubectl describe pod <pod-name> -n production
+kubectl describe pod <pod-name> -n staging
 
 # Get events
-kubectl get events -n production --sort-by='.lastTimestamp'
+kubectl get events -n staging --sort-by='.lastTimestamp'
 ```

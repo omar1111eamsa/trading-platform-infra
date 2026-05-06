@@ -56,9 +56,6 @@ cert-manager (SSL termination)
     ├── api.example.com          → backend-api:8081
     ├── terminal.example.com     → ui-terminal:3000
     ├── dashboard.example.com    → terminal-dashboard:80
-    ├── staging-api.example.com  → backend-api:8081 (staging)
-    ├── staging-terminal.example.com → ui-terminal:3000 (staging)
-    ├── staging-dashboard.example.com → terminal-dashboard:80 (staging)
     ├── argocd.example.com       → argocd-server:80
     └── grafana.example.com      → grafana:3000
 ```
@@ -70,8 +67,7 @@ cert-manager (SSL termination)
 | `argocd` | ArgoCD server and controllers |
 | `infra` | postgres, rabbitmq, clickhouse |
 | `monitoring` | prometheus, grafana, loki, falco |
-| `staging` | all app services (staging) |
-| `production` | all app services (production) |
+| `staging` | all app services (served on production domains) |
 
 ## Internal Service Communication
 
