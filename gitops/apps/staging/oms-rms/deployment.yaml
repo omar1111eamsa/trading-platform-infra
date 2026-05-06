@@ -24,6 +24,9 @@ spec:
         - name: oms-rms
           image: ghcr.io/trading-platform/oms-rms:4cae80b4769f2670558e8196264aad2b1fb3b480
           imagePullPolicy: Always
+          env:
+            - name: RABBITMQ_MANAGEMENT_URL
+              value: "http://rabbitmq.infra.svc.cluster.local:15672"
           envFrom:
             - secretRef:
                 name: oms-rms-secrets
