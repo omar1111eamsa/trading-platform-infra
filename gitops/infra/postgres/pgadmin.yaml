@@ -63,11 +63,16 @@ metadata:
   name: pgadmin
   namespace: infra
   annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
     nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
     nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
     nginx.ingress.kubernetes.io/proxy-body-size: "16m"
 spec:
   ingressClassName: nginx
+  tls:
+    - hosts:
+        - pgadmin.example.com
+      secretName: pgadmin-tls
   rules:
     - host: pgadmin.example.com
       http:
