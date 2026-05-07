@@ -28,7 +28,7 @@ spec:
         fsGroup: 1000
       containers:
         - name: backend-api
-          image: ghcr.io/trading-platform/backend-api:45924363c4384f06d811deafecbfe2845584bb0d
+          image: ghcr.io/trading-platform/backend-api:f7002487ff39abe8b1647beea61cc17643a3a860
           imagePullPolicy: Always
           ports:
             - containerPort: 8081
