@@ -22,7 +22,7 @@ spec:
         runAsUser: 1000
       containers:
         - name: oms-rms
-          image: ghcr.io/trading-platform/oms-rms:fc1ba11ed8e98b23db31a7717b48bbc3ffa8aca0
+          image: ghcr.io/trading-platform/oms-rms:3cbe95290d91a4d4f7d56589545937d0167bc942
           imagePullPolicy: Always
           env:
             - name: RABBITMQ_MANAGEMENT_URL
