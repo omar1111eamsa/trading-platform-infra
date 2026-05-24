@@ -28,7 +28,7 @@ spec:
         fsGroup: 1000
       containers:
         - name: backend-api
-          image: ghcr.io/trading-platform/backend-api:29e8ecd6220a3a22f3b3129e6e4e376e3e39e953
+          image: ghcr.io/trading-platform/backend-api:653921a8f538521625bec70178608772f53286af
           imagePullPolicy: Always
           ports:
             - containerPort: 8081
@@ -48,17 +48,25 @@ spec:
             capabilities:
               drop:
                 - ALL
+          startupProbe:
+            httpGet:
+              path: /health
+              port: 8081
+            initialDelaySeconds: 20
+            periodSeconds: 10
+            failureThreshold: 12
           livenessProbe:
             httpGet:
               path: /health
               port: 8081
-            initialDelaySeconds: 15
+            initialDelaySeconds: 0
             periodSeconds: 20
+            failureThreshold: 3
           readinessProbe:
             httpGet:
               path: /health
               port: 8081
-            initialDelaySeconds: 5
+            initialDelaySeconds: 0
             periodSeconds: 10
       imagePullSecrets:
         - name: ghcr-credentials
