@@ -24,7 +24,7 @@ spec:
         runAsUser: 1000
       containers:
         - name: mt5-bridge
-          image: ghcr.io/trading-platform/mt5-bridge:653921a8f538521625bec70178608772f53286af
+          image: ghcr.io/trading-platform/mt5-bridge:90cc01cf98b086f51917eb2f1ebcca3ff2ff31be
           imagePullPolicy: Always
           ports:
             - containerPort: 5556
