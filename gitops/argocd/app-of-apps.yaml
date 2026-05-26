@@ -23,6 +23,8 @@ spec:
             path: gitops/infra/rabbitmq
           - name: clickhouse
             path: gitops/infra/clickhouse
+          - name: pod-cleanup
+            path: gitops/infra/pod-cleanup
   template:
     metadata:
       name: 'infra-{{name}}'

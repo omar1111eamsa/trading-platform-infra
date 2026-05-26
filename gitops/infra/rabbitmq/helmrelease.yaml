@@ -1,3 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: rabbitmq-config
+  namespace: infra
+data:
+  rabbitmq.conf: |
+    # Block producers when free disk drops below 6 GB — fires before k8s
+    # DiskPressure eviction (~4.8 GB threshold), giving the cluster time to react.
+    disk_free_limit.absolute = 6GB
+    vm_memory_high_watermark.relative = 0.6
+---
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -35,6 +47,9 @@ spec:
           volumeMounts:
             - name: rabbitmq-data
               mountPath: /var/lib/rabbitmq
+            - name: rabbitmq-config
+              mountPath: /etc/rabbitmq/rabbitmq.conf
+              subPath: rabbitmq.conf
           resources:
             requests:
               memory: "512Mi"
@@ -56,6 +71,10 @@ spec:
             periodSeconds: 10
             timeoutSeconds: 10
             failureThreshold: 5
+      volumes:
+        - name: rabbitmq-config
+          configMap:
+            name: rabbitmq-config
   volumeClaimTemplates:
     - metadata:
         name: rabbitmq-data
