@@ -47,7 +47,7 @@ spec:
             runAsUser: 1000
           containers:
             - name: cleanup
-              image: bitnami/kubectl:1.29
+              image: bitnami/kubectl:latest
               securityContext:
                 allowPrivilegeEscalation: false
                 readOnlyRootFilesystem: true
