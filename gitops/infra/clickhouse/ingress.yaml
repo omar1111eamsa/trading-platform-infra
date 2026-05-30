@@ -4,11 +4,17 @@ metadata:
   name: clickhouse-ui
   namespace: infra
   annotations:
-    nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
-    nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
-    nginx.ingress.kubernetes.io/proxy-body-size: "64m"
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/proxy-body-size: "0"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+  labels:
+    app: clickhouse
 spec:
   ingressClassName: nginx
+  tls:
+    - hosts:
+        - clickhouse.example.com
+      secretName: clickhouse-tls
   rules:
     - host: clickhouse.example.com
       http:
