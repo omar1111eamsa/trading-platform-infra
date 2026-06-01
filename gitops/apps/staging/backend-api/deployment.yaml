@@ -40,8 +40,8 @@ spec:
               memory: "512Mi"
               cpu: "100m"
             limits:
-              memory: "2Gi"
-              cpu: "500m"
+              memory: "3Gi"
+              cpu: "1000m"
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
