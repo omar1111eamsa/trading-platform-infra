@@ -24,7 +24,7 @@ spec:
         runAsUser: 1000
       containers:
         - name: market-data-bridge
-          image: ghcr.io/trading-platform/market-data-bridge:e1d0444054fe6fcfa3bbec2d6f7a058865fcec83
+          image: ghcr.io/trading-platform/market-data-bridge:9148dd2aa265358ed7fad9b084e5d237932d8219
           imagePullPolicy: Always
           ports:
             - containerPort: 5558
