@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
         - name: terminal-dashboard
-          image: ghcr.io/trading-platform/terminal-dashboard:075d065b1b6a00a3d8e80bdc3224c67def9c76d5
+          image: ghcr.io/trading-platform/terminal-dashboard:29cce3eed66aa5fe4a2e3b4fb4e546723e107d60
           imagePullPolicy: Always
           ports:
             - containerPort: 80
