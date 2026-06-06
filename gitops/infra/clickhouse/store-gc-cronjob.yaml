@@ -1,0 +1,104 @@
+# ClickHouse orphaned-store garbage collector.
+#
+# ClickHouse (Atomic databases) leaves orphaned directories under
+# /var/lib/clickhouse/store when tables are dropped/recreated — e.g. during
+# schema migrations. These are never referenced by any live table but keep
+# consuming disk, and have caused multiple cluster-wide DiskPressure outages
+# (50G+ of dead data observed 2026-06-06).
+#
+# This job runs weekly, execs into clickhouse-0, and removes store dirs that
+# are BOTH (a) not referenced by any live table UUID AND (b) older than 24h.
+# The mtime guard guarantees a directory created mid-migration is never touched.
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: clickhouse-store-gc
+  namespace: infra
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: clickhouse-store-gc
+  namespace: infra
+rules:
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["get", "list"]
+  - apiGroups: [""]
+    resources: ["pods/exec"]
+    verbs: ["create"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: clickhouse-store-gc
+  namespace: infra
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: clickhouse-store-gc
+subjects:
+  - kind: ServiceAccount
+    name: clickhouse-store-gc
+    namespace: infra
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: clickhouse-store-gc
+  namespace: infra
+spec:
+  schedule: "0 4 * * 0"  # Sundays 04:00 UTC
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          serviceAccountName: clickhouse-store-gc
+          restartPolicy: OnFailure
+          containers:
+            - name: gc
+              image: bitnami/kubectl:latest
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  set -eu
+                  echo "=== ClickHouse store GC $(date -u) ==="
+                  kubectl exec -n infra clickhouse-0 -- bash -c '
+                    set -eu
+                    LIVE=$(clickhouse-client --user default --password "$CLICKHOUSE_PASSWORD" \
+                      --query "SELECT lower(toString(uuid)) FROM system.tables WHERE uuid != toUUID('"'"'00000000-0000-0000-0000-000000000000'"'"')")
+                    cd /var/lib/clickhouse/store || exit 0
+                    now=$(date +%s); freed=0
+                    for prefix in */; do
+                      prefix=${prefix%/}
+                      for path in "$prefix"/*/; do
+                        [ -d "$path" ] || continue
+                        uuid=$(basename "$path")
+                        if printf "%s\n" "$LIVE" | grep -qix "$uuid"; then continue; fi
+                        mt=$(stat -c %Y "$path" 2>/dev/null || echo "$now")
+                        age_h=$(( (now - mt) / 3600 ))
+                        if [ "$age_h" -lt 24 ]; then
+                          echo "SKIP recent orphan $prefix/$uuid (${age_h}h old)"
+                          continue
+                        fi
+                        sz=$(du -sh "$path" 2>/dev/null | cut -f1)
+                        echo "REMOVE orphan $prefix/$uuid (${age_h}h old, $sz)"
+                        rm -rf "$path"
+                        freed=$((freed+1))
+                      done
+                      rmdir "$prefix" 2>/dev/null || true
+                    done
+                    echo "Removed $freed orphaned store dir(s)"
+                  '
+                  echo "=== done ==="
+              resources:
+                requests:
+                  memory: "32Mi"
+                  cpu: "10m"
+                limits:
+                  memory: "64Mi"
+                  cpu: "100m"
