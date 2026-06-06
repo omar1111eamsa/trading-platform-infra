@@ -1,0 +1,37 @@
+# Standalone PrometheusRule for disk-usage alerts.
+#
+# Deployed as raw manifest (NOT via the monitoring Helm chart) because the
+# monitoring chart's values are nested-only and adding rules there is awkward.
+# Prometheus discovers this rule via its ruleSelector matchLabels
+# {release: infra-monitoring}, so the label below is what wires it in.
+#
+# Rationale: the cluster has gone down 3x from the root filesystem filling up
+# (RabbitMQ mnesia bloat, ClickHouse orphaned store dirs). These alerts fire
+# BEFORE DiskPressure eviction (~85-90% used) so there is time to act.
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: disk-usage-alerts
+  namespace: infra
+  labels:
+    release: infra-monitoring
+spec:
+  groups:
+    - name: node-disk
+      rules:
+        - alert: NodeDiskFillingUp70
+          expr: 100 * (1 - node_filesystem_avail_bytes{mountpoint="/",fstype!~"tmpfs|overlay"} / node_filesystem_size_bytes{mountpoint="/",fstype!~"tmpfs|overlay"}) > 70
+          for: 10m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Root disk over 70% on {{ $labels.instance }}"
+            description: "Root filesystem is {{ printf \"%.1f\" $value }}% full. Investigate before it hits DiskPressure (~85%). Common cause: ClickHouse orphaned store dirs or RabbitMQ mnesia bloat."
+        - alert: NodeDiskFillingUp85
+          expr: 100 * (1 - node_filesystem_avail_bytes{mountpoint="/",fstype!~"tmpfs|overlay"} / node_filesystem_size_bytes{mountpoint="/",fstype!~"tmpfs|overlay"}) > 85
+          for: 2m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Root disk CRITICAL (>85%) on {{ $labels.instance }}"
+            description: "Root filesystem is {{ printf \"%.1f\" $value }}% full. DiskPressure eviction is imminent — free space NOW (ClickHouse store GC, RabbitMQ mnesia, journal vacuum)."

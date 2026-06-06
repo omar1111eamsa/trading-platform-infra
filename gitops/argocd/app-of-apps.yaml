@@ -25,6 +25,8 @@ spec:
             path: gitops/infra/clickhouse
           - name: pod-cleanup
             path: gitops/infra/pod-cleanup
+          - name: monitoring-rules
+            path: gitops/infra/monitoring-rules
   template:
     metadata:
       name: 'infra-{{name}}'
