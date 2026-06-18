@@ -3,3 +3,7 @@
 *.tfstate.backup
 *.tfvars
 .terraform.lock.hcl
+
+# terraform binary / installer (never commit)
+terraform
+terraform_*.zip
