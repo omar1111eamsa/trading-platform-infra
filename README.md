@@ -38,7 +38,14 @@ a metrics stack and TLS to manage. Every deploy was a sequence of remembered SSH
 commands, and the environment could not be rebuilt without the person who first
 set it up.
 
-This repository removes that dependency. The whole platform is defined as code,
+There was a second problem on the development side. Each developer ran services
+locally with no shared, integrated environment, so work that depended on other
+services was hard: there was nowhere that all the pieces ran together against the
+same databases and broker. This repository also fixes that by providing a real
+staging environment that mirrors production, so developers integrate against the
+running system instead of stubs on their own machine.
+
+This repository removes both dependencies. The whole platform is defined as code,
 in three layers, so it can be rebuilt from nothing and operated from a handful of
 commands instead of memory.
 
@@ -112,6 +119,12 @@ Data and platform services (`gitops/infra`):
 | Runtime security | Falco | Syscall-level threat detection |
 | Secrets | Sealed Secrets | Encrypted credentials safe to keep in Git |
 
+Routing is handled by the Nginx ingress today. The plan is to move the edge to a
+dedicated API gateway, which would centralise authentication, rate limiting and
+routing in one place ahead of the services rather than spreading that concern
+across ingress rules. The current setup is structured so this is a swap at the
+edge, not a change to the services behind it.
+
 The reasoning behind the larger choices — k3s over a heavier orchestrator,
 ArgoCD for GitOps, ClickHouse over InfluxDB, sealed secrets for credentials — is
 recorded in `docs/decisions`, one file per decision.
@@ -138,7 +151,12 @@ that are already in the repo. The intent was to make that growth boring.
 
 ## Secrets
 
-Everything sensitive here is either a Sealed Secret (encrypted, decryptable only
-by the cluster's controller) or a reference resolved at deploy time. No plaintext
-credentials, server addresses, or private endpoints are committed, and
-pre-commit secret scanning keeps it that way.
+Credentials are stored as Sealed Secrets — encrypted in Git and decryptable only
+by the controller running in the cluster. This was chosen for portability: the
+secrets live in the same repository as everything else, so a rebuild pulls the
+configuration and its secrets together, with no separate vault or out-of-band
+step to restore. The encrypted form is safe to keep in a public repository
+because the plaintext never leaves the cluster.
+
+No plaintext credentials, server addresses, or private endpoints are committed,
+and pre-commit secret scanning keeps it that way.
