@@ -17,3 +17,6 @@ ansible/ansible_error.log
 # OS
 .DS_Store
 *.swp
+
+# ansible vault secrets (never commit; use secrets.yml.example as template)
+ansible/inventories/*/group_vars/secrets.yml
