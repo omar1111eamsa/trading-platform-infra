@@ -53,7 +53,7 @@ commands instead of memory.
 
 | Goal | How it is met |
 |---|---|
-| **Portable** — rebuildable from zero, not tied to one server or vendor | Terraform provisions, Ansible bootstraps, Git holds cluster state. No manual step lives only in someone's head. Terraform is split per provider (`terraform/ovh`, `terraform/azure`). |
+| **Portable** — rebuildable from zero, not tied to one server or vendor | Terraform provisions, Ansible bootstraps, Git holds cluster state. No manual step lives only in someone's head. Terraform is split per provider so a new cloud target is a new directory, not a rewrite. |
 | **Two environments, one definition** — what is tested is what ships | `gitops/apps` is organised per environment from the same `gitops/infra` base. Environments differ by config and image tag, not by deployment method. |
 | **Fast, low-effort deploys** — no manual ritual | A service pipeline pushes an image and writes the tag here; ArgoCD rolls it out. Humans rarely touch the cluster. |
 | **Expandable** — growth is additive, not a rewrite | New service = a directory plus an app-of-apps entry. New infra = same pattern. New cloud = a new Terraform target. |
@@ -82,8 +82,11 @@ Makefile     Command interface: setup, validate, plan
 
 Bringing the platform up is three stages, each owning the next:
 
-1. **Terraform** creates the server and DNS records (`terraform/ovh`, with
-   `terraform/azure` as a parallel target so the platform is not vendor-locked).
+1. **Terraform** creates the server and DNS records (`terraform/ovh`). An Azure
+   target previously provisioned Windows machines to run applications that need
+   Windows, such as the MT5 trader; it has since been removed because those
+   workloads now run on the organisation's own servers. The per-provider split
+   remains the pattern, so a cloud target can be added back the same way.
 2. **Ansible** turns the machine into a cluster — installs k3s and the pieces
    that must exist before GitOps takes over (ingress, cert-manager, sealed
    secrets, monitoring, runtime security). Playbooks: `site.yml`, `k3s.yml`,
