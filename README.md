@@ -70,6 +70,12 @@ git push  ->  CI builds & pushes image  ->  CI writes new tag into this repo
 
 A code change reaches production without anyone running a deploy command by hand.
 
+The commit history reflects this. The automated commits authored by
+`github-actions` are the pipeline writing image tags into the repository on each
+successful build — they are the deployment mechanism running end to end, not
+manual edits. A steady stream of them is the sign that builds are passing and
+deployments are flowing through the pipeline as intended.
+
 ## Repository layout
 
 ```
