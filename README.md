@@ -58,6 +58,34 @@ commands instead of memory.
 | **Fast, low-effort deploys** — no manual ritual | A service pipeline pushes an image and writes the tag here; ArgoCD rolls it out. Humans rarely touch the cluster. |
 | **Expandable** — growth is additive, not a rewrite | New service = a directory plus an app-of-apps entry. New infra = same pattern. New cloud = a new Terraform target. |
 
+## Challenges I faced (and how I solved them)
+
+A portable, self-operated platform on a VPS doesn't come up clean — the hard parts are below. Every
+item is a real problem from the commit history and the fix that resolved it:
+
+- **`backend-api` repeatedly OOMKilled.** Raised the memory limit 1Gi → 2Gi and it *still* died at
+  2Gi on a newer image — so I stopped guessing, bumped to 3Gi to stabilise it, and traced the jump
+  to a specific image build rather than treating the symptom forever.
+- **RabbitMQ pods killed mid-startup.** Liveness/readiness probes timed out before the broker was
+  ready, so Kubernetes kept restarting it. Increased the probe timeouts, added a disk limit, and
+  scheduled hourly cleanup of evicted pods so disk pressure stops cascading.
+- **Prometheus refusing to apply.** Its CRDs exceeded the annotation size limit on a normal
+  `kubectl apply`. Switched that resource to **ServerSideApply**, which doesn't stuff the whole
+  object into a `last-applied` annotation.
+- **Database CRDs were fragile.** Replaced the Flux-style database CRDs with plain `StatefulSet`s —
+  fewer moving operator pieces to break, and the data layer became something I fully control.
+- **CI passing on things that should fail (and failing on things that shouldn't).** Tuned the GitOps
+  validation pipeline: swapped gitleaks for **trufflehog** for secret scanning, excluded
+  `SealedSecret`/`Chart.yaml`/`values.yaml` from `kubeconform` (they aren't plain k8s objects), and
+  disabled yamllint line-length on base64 sealed-secret blobs.
+- **Service discovery lookups failing.** `oms-rms` couldn't resolve RabbitMQ until I set
+  `RABBITMQ_MANAGEMENT_URL` to the **full** in-cluster DNS name; and an image tag
+  (`bitnami/kubectl:1.29`) that simply didn't exist on Docker Hub broke the pod-cleanup job until I
+  pinned a tag that does.
+- **Provisioning the box itself.** Terraform stands up an **OVH VPS + DNS** from scratch, and Ansible
+  fixes the kernel/network prerequisites (`br_netfilter`, ingress-nginx NodePort, sealed-secrets)
+  that a bare server doesn't have by default.
+
 ## Deployment flow
 
 ```
